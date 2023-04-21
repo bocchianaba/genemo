@@ -1,0 +1,120 @@
+<app-banner [title]="'Generators'"></app-banner>
+<section class="container">
+  <div class="row d-flex justify-content-center align-items-center">
+    <div class="col-sm-8 col-md-8 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
+      <div class="form-floating my-2 w-100">
+        <input type="search" class="form-control" id="search_bar" placeholder="Rechercher par ici ...">
+        <label for="search_bar">Rechercher</label>
+      </div>
+    </div>
+    <div class="col-sm-2 col-md-2 col-lg-4 col-xl-4 d-flex justify-content-center align-items-center">
+      <button class="btn btn-primary" (click)="display='card'">
+        <i class="fa fa-th"></i>
+      </button>
+      <button class="btn btn-primary mx-lg-4" (click)="display='list'">
+        <i class="fa fa-list"></i>
+      </button>
+      <button class="btn btn-primary">
+        <i class="fa fa-ellipsis-v"></i>
+      </button>
+    </div>
+  </div>
+</section>
+<section class="container" *ngIf="display=='card'">
+  <div class="row d-flex justify-content-center align-items-skretch">
+    <div class="col-sm-10 col-md-6 col-lg-4 col-xl-3" *ngFor="let i of [1,2,3,4,5,6,7,8,9]">
+      <div class="card border-primary my-2">
+        <!-- <img class="card-img-top" src="holder.js/100px180/" alt=""> -->
+        <div class="card-body pb-0">
+          <h4 class="card-title">
+            <span>Title</span>
+            <button class="btn btn-outline-primary float-end" [ngClass]="{'text-success': i%2, 'text-danger': i%2==0}">
+              <i *ngIf="i%2==0" class="fa fa-power-off "></i>
+              <i *ngIf="i%2" class="fa fa-circle-o-notch fa-spin "></i>
+            </button>
+          </h4>
+          <div class="row d-flex justify-content-between">
+            <div class="col-sm-8 col-md-6">
+              <span style="font-size:2rem">2</span>
+              <i class="fa fa-tint fa-2x mx-2"></i>
+            </div>
+            <div class="col-sm-8 col-md-6">
+              <span style="font-size:2rem">4</span>
+              <i class="fa fa-battery-quarter fa-2x mx-2"></i>
+            </div>
+            <div class="col-sm-8 col-md-8">
+              <span style="font-size:2rem">27°C</span>
+              <i class="fa fa-thermometer-quarter fa-2x mx-2"></i>
+            </div>
+          </div>
+          <div class="text-center">
+            <button class="btn btn-primary" [routerLink]="'/modules/'+i">Voir plus <i class="fa fa-plus"></i></button>
+          </div>
+          <div class="text-center mb-0">
+            <small style="font-size: x-small;"> Dernière activité il y a <strong>quelques secondes</strong>  </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="my-4">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+<section class="container" *ngIf="display=='list'">
+  <div class="row d-flex justify-content-center align-items-center text-center">
+    <table class="table table-hover table-bordered table-responsive">
+      <thead class="thead-default table-dark">
+        <tr class=" align-middle">
+          <th>Nom</th>
+          <th>Etat</th>
+          <th>Temperature</th>
+          <th>Fuel</th>
+          <th>frequence</th>
+          <th>Pression d'huile</th>
+          <th>Date</th>
+          <th>Phase 1</th>
+          <th>Phase 2</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of [1,2,3,4,5,6,7,8,9]" class=" align-middle">
+            <td scope="row">Name</td>
+            <td>
+              <span *ngIf="item%2==0" class="text-danger">
+                <i class="fa fa-power-off mx-2"></i> En Arrêt
+              </span>
+              <span *ngIf="item%2" class="text-success">
+                <i class="fa fa-circle-o-notch fa-spin "></i> En fonction
+              </span>
+            </td>
+            <td>27°C</td>
+            <td>7L</td>
+            <td>25 mhz</td>
+            <td>44 Bar</td>
+            <td>il y a quelques secondes</td>
+            <td>initialisation</td>
+            <td>exportation</td>
+            <td>
+              <button class="btn btn-primary" [routerLink]="'/modules/'+item">
+                voir plus <i class="fa fa-plus" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</section>
