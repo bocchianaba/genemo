@@ -2,6 +2,10 @@ export interface Module_list {
   data: Module[]
   pagination: Pagination
 }
+export interface Module_info {
+  data: Module_simple
+  lastInfo: LastData
+}
 
 export interface Module {
   id: string
@@ -11,6 +15,14 @@ export interface Module {
   dataRequired: DataRequired
   etat: boolean
   lastData: LastData
+}
+export interface Module_simple {
+  id: string
+  stationName: string
+  position: Position
+  duree_fonctionnement: DureeFonctionnement
+  dataRequired: DataRequired
+  etat: boolean
 }
 
 export interface Position {}
