@@ -5,17 +5,23 @@ import { ModuleRoutingModule } from './module-routing.module';
 import { ModuleComponent } from './module.component';
 import { SharedModule } from '../shared/shared.module';
 import { ModuleDetailsComponent } from './components/module-details/module-details.component';
+import { EventComponent } from './components/event/event.component';
+import { ModuleService } from './services/module.service';
 
 
 @NgModule({
   declarations: [
     ModuleComponent,
-    ModuleDetailsComponent
+    ModuleDetailsComponent,
+    EventComponent
   ],
   imports: [
     CommonModule,
     ModuleRoutingModule,
     SharedModule
+  ],
+  providers:[
+    ModuleService
   ]
 })
 export class ModuleModule { }

@@ -2,9 +2,11 @@
 <section class="container">
   <div class="row d-flex justify-content-center align-items-center">
     <div class="col-sm-8 col-md-8 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
-      <div class="form-floating my-2 w-100">
+      <div class="input-group my-2 w-100">
         <input type="search" class="form-control" id="search_bar" placeholder="Rechercher par ici ...">
-        <label for="search_bar">Rechercher</label>
+        <button class="btn btn-primary" type="button" id="button-addon2">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
     <div class="col-sm-2 col-md-2 col-lg-4 col-xl-4 d-flex justify-content-center align-items-center">
@@ -28,7 +30,7 @@
         <div class="card-body pb-0">
           <h4 class="card-title">
             <span>Title</span>
-            <button class="btn btn-outline-primary float-end" [ngClass]="{'text-success': i%2, 'text-danger': i%2==0}">
+            <button class="btn btn-outline-primary float-end" [ngClass]="{'text-primary': i%2, 'bg-danger': i%2==0, 'text-light': i%2==0}">
               <i *ngIf="i%2==0" class="fa fa-power-off "></i>
               <i *ngIf="i%2" class="fa fa-circle-o-notch fa-spin "></i>
             </button>
