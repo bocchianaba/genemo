@@ -8,6 +8,7 @@ import { ModuleDetailsComponent } from './components/module-details/module-detai
 import { EventComponent } from './components/event/event.component';
 import { ModuleService } from './services/module.service';
 
+import { ToastrService } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -18,10 +19,11 @@ import { ModuleService } from './services/module.service';
   imports: [
     CommonModule,
     ModuleRoutingModule,
-    SharedModule
+    SharedModule,
   ],
   providers:[
-    ModuleService
+    ModuleService,
+    ToastrService
   ]
 })
 export class ModuleModule { }
