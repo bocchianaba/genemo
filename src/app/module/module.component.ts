@@ -19,6 +19,7 @@ export class ModuleComponent implements OnInit, OnDestroy {
   loading: boolean=false;
   module_list!: Module_list;
   limit=6
+  search_name=""
 
   constructor(
     private module_service: ModuleService,
@@ -55,7 +56,7 @@ export class ModuleComponent implements OnInit, OnDestroy {
     this.loading=true
     this.loader.startBackground()
     this.subscription.unsubscribe()
-    this.subscription=this.module_service.get_all_modules(page,this.limit).subscribe({
+    this.subscription=this.module_service.get_all_modules(page,this.limit,this.search_name).subscribe({
       next:(module_list)=>{
         this.module_list=module_list
       },
@@ -69,5 +70,21 @@ export class ModuleComponent implements OnInit, OnDestroy {
       }
     })
   }
-
+  search_module(){
+    this.loading=true
+    this.loader.startBackground()
+    this.subscription=this.module_service.search_by_name(this.search_name).subscribe({
+      next:(module_list)=>{
+        this.module_list=module_list
+      },
+      error:(err)=>{
+        console.log({err})
+        this.toast.error(err.error.message)
+      },
+      complete: ()=>{
+        this.loader.stopBackground()
+        this.loading=false
+      }
+    })
+  }
 }

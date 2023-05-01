@@ -1,0 +1,13 @@
+<div class="card my-2">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span>{{title  |truncate:5}}</span>
+    <i [class]="'float-end fa fa-'+icon"></i>
+  </div>
+  <div class="card-body d-flex justify-content-center align-items-center">
+    <h5 class="card-title" style="font-weight: bold;font-size: 2rem;">{{value}}</h5>
+    <p class="card-text">{{mesure}}</p>
+  </div>
+  <div class="card-footer text-muted" style="font-size: x-small;">
+    Il y a 5 minutes
+  </div>
+</div>

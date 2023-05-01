@@ -27,7 +27,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     datasets: [
       {
         data: [ 65, 59, 80, 81, 56, 55, 40 ],
-        label: 'Series A',
+        label: 'Fuel',
         backgroundColor: 'rgba(148,159,177,0.2)',
         borderColor: 'rgba(148,159,177,1)',
         pointBackgroundColor: 'rgba(148,159,177,1)',
@@ -38,7 +38,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       },
       {
         data: [ 28, 48, 40, 19, 86, 27, 90 ],
-        label: 'Series B',
+        label: 'Battérie',
         backgroundColor: 'rgba(77,83,96,0.2)',
         borderColor: 'rgba(77,83,96,1)',
         pointBackgroundColor: 'rgba(77,83,96,1)',
@@ -49,7 +49,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       },
       {
         data: [ 180, 480, 770, 90, 1000, 270, 400 ],
-        label: 'Series C',
+        label: 'Température',
         // yAxisID: 'y1',
         backgroundColor: 'rgba(255,0,0,0.3)',
         borderColor: 'red',
@@ -72,6 +72,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   };
 
   public lineChartType: ChartType = 'line';
+  module_simple$: any;
+  module_simple: any;
+  // fuel_data!: ChartConfiguration['data']=new ChartConfiguration['data']();
 
   constructor(
     private module_service: ModuleService,
@@ -84,6 +87,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.module$=this.module_service.get_module(this.id)
+    this.module_simple$=this.module_service.get_simple_module(this.id)
     this.loader.startBackground()
     this.module_subscription=this.module$.subscribe(
       {
@@ -91,8 +95,39 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           console.log({mod})
           this.loading=false
           this.module=mod
+          // this.fuel_data.labels=this.module.data.map(
+          //   (mod)=>{
+          //     let data: string[]=[]
+          //     mod.infos.map(
+          //       info=>{
+          //         data.push(info.date)
+          //       }
+          //     )
+          //     return data
+          //   }
+          // )
+          // console.log({labels: this.fuel_data.labels})
         },
         error:(err)=>{
+          console.log({err})
+          this.err_message=err.error.message
+          this.loading=false
+          this.loader.stopBackground()
+        },
+        complete:()=>{
+          this.loading=false
+          this.loader.stopBackground()
+        }
+      }
+    )
+    this.module_subscription=this.module_simple$.subscribe(
+      {
+        next:(mod: Module_info)=>{
+          console.log({mod})
+          this.loading=false
+          this.module_simple=mod
+        },
+        error:(err:any)=>{
           console.log({err})
           this.err_message=err.error.message
           this.loading=false

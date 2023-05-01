@@ -3,17 +3,22 @@
   <div class="row d-flex justify-content-center align-items-center">
     <div class="col-sm-8 col-md-8 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
       <div class="input-group my-2 w-100">
-        <input type="search" class="form-control" id="search_bar" placeholder="Rechercher par ici ...">
+        <input type="search" (keyup)="search_module()" [(ngModel)]="search_name" class="form-control" id="search_bar"
+          placeholder="Rechercher par ici ...">
         <button class="btn btn-primary" type="button" id="button-addon2">
           <i class="fa fa-search" aria-hidden="true"></i>
         </button>
       </div>
     </div>
     <div class="col-sm-2 col-md-2 col-lg-4 col-xl-4 d-flex justify-content-center align-items-center">
-      <button class="btn btn-primary" [ngClass]="{'btn btn-primary-outline':display==='list','btn btn-primary':display==='card'}" placement="top" ngbTooltip="Afficher les modules en carte" (click)="display='card'">
+      <button
+        class="btn btn-primary"
+        placement="top" ngbTooltip="Afficher les modules en carte" (click)="display='card'">
         <i class="fa fa-th"></i>
       </button>
-      <button class="btn btn-primary mx-lg-4" (click)="display='list'" placement="top" ngbTooltip="Afficher les modules en liste">
+      <button
+        class="btn btn-primary mx-lg-4 mx-md-2"
+        (click)="display='list'" placement="top" ngbTooltip="Afficher les modules en liste">
         <i class="fa fa-list"></i>
       </button>
       <button class="btn btn-primary" placement="top" ngbTooltip="Plus d'options">
@@ -32,7 +37,8 @@
             <div class="card-body pb-0">
               <h4 class="card-title">
                 <span>{{module.stationName| truncate}}</span>
-                <button class="btn btn-outline-primary float-end" [ngClass]="{'text-primary': module.etat, 'bg-danger': !module.etat, 'text-light': !module.etat}">
+                <button class="btn btn-outline-primary float-end"
+                  [ngClass]="{'text-primary': module.etat, 'bg-danger': !module.etat, 'text-light': !module.etat}">
                   <i *ngIf="!module.etat" class="fa fa-power-off "></i>
                   <i *ngIf="module.etat" class="fa fa-circle-o-notch fa-spin "></i>
                 </button>
@@ -52,7 +58,8 @@
                 </div>
               </div>
               <div class="text-center">
-                <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">Voir plus <i class="fa fa-plus"></i></button>
+                <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">Voir plus <i
+                    class="fa fa-plus"></i></button>
               </div>
               <div class="text-center mb-0">
                 <small style="font-size: x-small;"> fonctionne depuis
@@ -81,11 +88,8 @@
             </div>
           </div>
         </div>
-        <ngb-pagination
-          class="d-flex justify-content-center my-4"
-          (pageChange)="page_change($event)"
-          [(page)]="module_list.pagination.page"
-          [pageSize]="module_list.pagination.limit"
+        <ngb-pagination class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
+          [(page)]="module_list.pagination.page" [pageSize]="module_list.pagination.limit"
           [collectionSize]="module_list.pagination.totalCount">
         </ngb-pagination>
       </div>
@@ -106,57 +110,54 @@
               <th>Phase 2</th>
               <th>Actions</th>
             </tr>
-            </thead>
-            <tbody>
-              <tr  *ngFor="let module of module_list.data" class=" align-middle">
-                <td scope="row">{{module.stationName}}</td>
-                <td>
-                  <span *ngIf="!module.etat" class="text-danger">
-                    <i class="fa fa-power-off mx-2"></i> En Arrêt
-                  </span>
-                  <span *ngIf="module.etat" class="text-success">
-                    <i class="fa fa-circle-o-notch fa-spin "></i> En fonction
-                  </span>
-                </td>
-                <td>{{module.lastData.data.temperature}} °C</td>
-                <td>{{module.lastData.data.fuel}} L</td>
-                <td>{{module.lastData.data.frequence}} Mhz</td>
-                <td>{{module.lastData.data.pression_huile}} Bar</td>
-                <td>
-                  <ng-container *ngIf="module.duree_fonctionnement_format.years">
-                    {{module.duree_fonctionnement_format.years}} an(s)
-                  </ng-container>
-                  <ng-container *ngIf="module.duree_fonctionnement_format.months">
-                    {{module.duree_fonctionnement_format.months}} mois
-                  </ng-container>
-                  <ng-container *ngIf="module.duree_fonctionnement_format.days">
-                    {{module.duree_fonctionnement_format.days}} jour(s)
-                  </ng-container>
-                  <ng-container *ngIf="module.duree_fonctionnement_format.hours">
-                    {{module.duree_fonctionnement_format.hours}} heure(s)
-                  </ng-container>
-                  <ng-container *ngIf="module.duree_fonctionnement_format.minutes">
-                    {{module.duree_fonctionnement_format.minutes}} minute(s)
-                  </ng-container>
-                  <ng-container *ngIf="module.duree_fonctionnement_format.seconds">
-                    {{module.duree_fonctionnement_format.seconds}} seconde(s)
-                  </ng-container>
-                </td>
-                <td>{{module.lastData.data.phase1}}</td>
-                <td>{{module.lastData.data.phase2}}</td>
-                <td>
-                  <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
-                    voir plus <i class="fa fa-plus" aria-hidden="true"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
+          </thead>
+          <tbody>
+            <tr *ngFor="let module of module_list.data" class=" align-middle">
+              <td scope="row">{{module.stationName}}</td>
+              <td>
+                <span *ngIf="!module.etat" class="text-danger">
+                  <i class="fa fa-power-off mx-2"></i> En Arrêt
+                </span>
+                <span *ngIf="module.etat" class="text-success">
+                  <i class="fa fa-circle-o-notch fa-spin "></i> En fonction
+                </span>
+              </td>
+              <td>{{module.lastData.data.temperature}} °C</td>
+              <td>{{module.lastData.data.fuel}} L</td>
+              <td>{{module.lastData.data.frequence}} Mhz</td>
+              <td>{{module.lastData.data.pression_huile}} Bar</td>
+              <td>
+                <ng-container *ngIf="module.duree_fonctionnement_format.years">
+                  {{module.duree_fonctionnement_format.years}} an(s)
+                </ng-container>
+                <ng-container *ngIf="module.duree_fonctionnement_format.months">
+                  {{module.duree_fonctionnement_format.months}} mois
+                </ng-container>
+                <ng-container *ngIf="module.duree_fonctionnement_format.days">
+                  {{module.duree_fonctionnement_format.days}} jour(s)
+                </ng-container>
+                <ng-container *ngIf="module.duree_fonctionnement_format.hours">
+                  {{module.duree_fonctionnement_format.hours}} heure(s)
+                </ng-container>
+                <ng-container *ngIf="module.duree_fonctionnement_format.minutes">
+                  {{module.duree_fonctionnement_format.minutes}} minute(s)
+                </ng-container>
+                <ng-container *ngIf="module.duree_fonctionnement_format.seconds">
+                  {{module.duree_fonctionnement_format.seconds}} seconde(s)
+                </ng-container>
+              </td>
+              <td>{{module.lastData.data.phase1}}</td>
+              <td>{{module.lastData.data.phase2}}</td>
+              <td>
+                <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
+                  voir plus <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
-        <ngb-pagination
-          class="d-flex justify-content-center my-4"
-          (pageChange)="page_change($event)"
-          [(page)]="module_list.pagination.page"
-          [pageSize]="module_list.pagination.limit"
+        <ngb-pagination class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
+          [(page)]="module_list.pagination.page" [pageSize]="module_list.pagination.limit"
           [collectionSize]="module_list.pagination.totalCount">
         </ngb-pagination>
       </div>
@@ -180,4 +181,3 @@
   </ng-template>
 
 </ng-container>
-
