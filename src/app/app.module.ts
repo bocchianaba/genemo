@@ -7,10 +7,17 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxUiLoaderConfig, NgxUiLoaderModule, NgxUiLoaderRouterModule } from 'ngx-ui-loader';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+
+registerLocaleData(localeFr);
 
 const ngx_ui_loader_configuration:NgxUiLoaderConfig =
 {
-  "bgsColor": "blue",
+  "bgsColor": "#2163ff",
   "bgsOpacity": 1,
   "bgsPosition": "bottom-right",
   "bgsSize": 100,
@@ -51,9 +58,12 @@ const ngx_ui_loader_configuration:NgxUiLoaderConfig =
     ToastrModule.forRoot(),
     SharedModule,
     NgxUiLoaderModule.forRoot(ngx_ui_loader_configuration),
-    NgxUiLoaderRouterModule
+    NgxUiLoaderRouterModule,
+    NgbModule
   ],
-  providers: [],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'fr-FR' }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

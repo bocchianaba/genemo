@@ -9,17 +9,21 @@ import { EventComponent } from './components/event/event.component';
 import { ModuleService } from './services/module.service';
 
 import { ToastrService } from 'ngx-toastr';
+import { NgChartsModule } from 'ng2-charts';
+import { ModuleItemComponent } from './components/module-item/module-item.component';
 
 @NgModule({
   declarations: [
     ModuleComponent,
     ModuleDetailsComponent,
-    EventComponent
+    EventComponent,
+    ModuleItemComponent
   ],
   imports: [
     CommonModule,
     ModuleRoutingModule,
     SharedModule,
+    NgChartsModule
   ],
   providers:[
     ModuleService,

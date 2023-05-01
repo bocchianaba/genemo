@@ -1,7 +1,7 @@
 <app-banner [title]="'Détails'"></app-banner>
 <section>
-  <div class="container row d-flex justify-content-center align-items-skretch p-4">
-    <ng-container *ngIf="module$ | async as module; else no_module">
+  <div *ngIf="module; else no_module" class="container row d-flex justify-content-center align-items-skretch p-4">
+    <ng-container>
       <div class="col-xs-11 col-sm-10 col-md-4">
         <a routerLink="/modules" class="mb-4 pb-4 text-center">
           <i class="fa fa-caret-left" aria-hidden="true"></i>
@@ -10,7 +10,7 @@
         <div class="card border-primary my-4" >
           <div class="card-body">
             <h3 class="card-title text-center fw-bold">Tous les détails</h3>
-            <div class="row">
+            <!-- <div class="row">
               <div class="col-12 d-flex align-items-center justify-content-between">
                 <h4 class="float-start">Nom :</h4>
                 <span class="float-end"> {{module.data.stationName}}</span>
@@ -47,7 +47,7 @@
                 <h4 class="float-start">Phase 2 :</h4>
                 <span class="float-end">{{module.lastInfo.data.phase2}}</span>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="text-center">
@@ -55,17 +55,105 @@
         </div>
       </div>
       <div class="col-xs-11 col-sm-10 col-md-8">
-        <h1 class="text-center"> Evènements </h1>
-        <app-event *ngFor="let event of [1,2,3,4,5]" [event]="event"></app-event>
+        <canvas baseChart class="chart"
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType">
+        </canvas>
+        <h1 class="text-center"> Plage horaire </h1>
+        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
+          <ngb-panel *ngFor="let mod of module.data" [id]="mod.id">
+            <ng-template ngbPanelTitle>{{mod.date_debut | date: 'dd MMMM yyyy à HH:mm'}} - {{mod.date_fin | date: 'dd MMMM yyyy à HH:mm'}}</ng-template>
+            <ng-template ngbPanelContent>
+                <div class="row d-flex justify-content-center align-items-center text-center">
+                  <table class="table table-hover table-bordered table-responsive">
+                    <thead class="thead-default table-dark">
+                      <tr class=" align-middle">
+                        <th>Heure</th>
+                        <th>Temperature</th>
+                        <th>Fuel</th>
+                        <th>frequence</th>
+                        <th>Pression d'huile</th>
+                        <th>Phase 1</th>
+                        <th>Phase 2</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr  *ngFor="let modul of mod.infos" class=" align-middle">
+                        <td scope="row">{{modul.date | date: 'HH:mm:ss'}}</td>
+                        <td>{{modul.temperature}} °C</td>
+                        <td>{{modul.fuel}} L</td>
+                        <td>{{modul.frequence}} Mhz</td>
+                        <td>{{modul.pression_huile}} Bar</td>
+                        <td>{{modul.phase1}}</td>
+                        <td>{{modul.phase2}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <ngb-pagination
+                    class="d-flex justify-content-center my-4"
+                    (pageChange)="page_change($event)"
+                    [(page)]="module.pagination.page"
+                    [pageSize]="module.pagination.limit"
+                    [collectionSize]="module.pagination.totalCount">
+                  </ngb-pagination>
+                </div>
+              <div class="row">
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">id :</h4>
+                  <span class="float-end"> {{mod.id}}</span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Fuel :</h4>
+                  <span class="float-end"> {{mod.infos[0].fuel}} L</span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Température :</h4>
+                  <span class="float-end">{{mod.infos[0].temperature}} °C</span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Fréquence :</h4>
+                  <span class="float-end"> {{mod.infos[0].frequence}} MHz </span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Pression :</h4>
+                  <span class="float-end">{{mod.infos[0].pression_huile}} Bar</span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Date :</h4>
+                  <span class="float-end">{{mod.infos[0].date | date: 'dd MMMM yyyy à HH:mm'}}</span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Phase 1 :</h4>
+                  <span class="float-end"> {{mod.infos[0].phase1}}</span>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <h4 class="float-start">Phase 2 :</h4>
+                  <span class="float-end">{{mod.infos[0].phase2}}</span>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
       </div>
     </ng-container>
-    <ng-template #no_module>
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <h1 class="text-center my-4 py-4 text-danger">
-          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-          Désolé ce module n'existe pas
-        </h1>
-      </div>
-    </ng-template>
   </div>
+  <ng-template #no_module>
+    <div *ngIf="!loading" class="row d-flex justify-content-center align-items-center">
+      <div class="col-sm-10 col-md-6 col-lg-4">
+        <div class="row justify-content-center">
+          <img src="assets/error.png" alt="error image">
+        </div>
+      </div>
+      <h1 class="text-center mt-4 pt-4 text-danger">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+        {{err_message}}
+      </h1>
+      <p class="text-center">Module introuvable.</p>
+      <a routerLink="/modules" class="mb-4 pb-4 text-center">
+        <i class="fa fa-caret-left" aria-hidden="true"></i>
+        Aller vers la liste de modules
+      </a>
+    </div>
+  </ng-template>
 </section>

@@ -2,19 +2,26 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BannerComponent } from './components/banner/banner.component';
 import { HttpClientModule } from  '@angular/common/http';
+import { NgbAccordionModule, NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { TruncateTextPipe } from './pipes/truncate-text.pipe';
 
 
 
 @NgModule({
   declarations: [
-    BannerComponent
+    BannerComponent,
+    TruncateTextPipe
   ],
   imports: [
     CommonModule,
-    HttpClientModule,
+    HttpClientModule
   ],
   exports: [
-    BannerComponent
+    BannerComponent,
+    NgbPaginationModule,
+    TruncateTextPipe,
+    NgbTooltipModule,
+    NgbAccordionModule
   ]
 })
 export class SharedModule { }
