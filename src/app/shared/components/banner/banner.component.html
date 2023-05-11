@@ -1,5 +1,6 @@
 <div class="jumbotron">
-  <div class="container h-100 w-100 d-flex align-items-center justify-content-center">
+  <div class="container h-100 w-100 d-flex align-items-center justify-content-center flex-column">
     <h1 class="text-center text-white">{{title}}</h1>
+    <h6 class="text-center text-white mt-4" *ngIf="description" [innerHTML]="description"></h6>
   </div>
 </div>

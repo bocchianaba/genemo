@@ -1,6 +1,7 @@
-<app-banner [title]="module_simple?.data?.stationName"></app-banner>
+<app-banner [title]="module_simple.data.stationName"
+[description]="'A déjà fonctionner '+module_simple.data.elapse_total.seconds+' secondes, depuis la création <br> Fonctionne '+module_simple.data.elapse.seconds+' secondes, depuis le dernier arrêt'"></app-banner>
 <section>
-  <div *ngIf="module; else no_module" class="row d-flex justify-content-center p-4 m-0">
+  <div *ngIf="trame; else no_module" class="row d-flex justify-content-center p-4 m-0">
     <ng-container>
       <div class="col-xs-11 col-sm-10 col-md-4">
         <a routerLink="/modules" class="mb-4 pb-4 text-center">
@@ -12,9 +13,9 @@
             <h3 class="card-title text-center fw-bold">Dernières infos</h3>
             <div class="row">
               <div class="col-12 d-flex flex-column align-items-center justify-content-between">
-                <app-character-item [title]="'Temperature'" [value]="25" [mesure]="'°C'" [icon]="'thermometer-quarter'" ></app-character-item>
-                <app-character-item [title]="'Fuel'" [value]="12" [mesure]="'L'" [icon]="'tint'" ></app-character-item>
-                <app-character-item [title]="'Batterie'" [value]="52" [mesure]="'%'" [icon]="'battery-quarter'" ></app-character-item>
+                <app-character-item [title]="'Temperature'" [value]="module_simple.data.dataRequired.temp" [mesure]="'°C'" [icon]="'thermometer-quarter'" ></app-character-item>
+                <app-character-item [title]="'Fuel'" [value]="module_simple.data.dataRequired.fuel" [mesure]="'L'" [icon]="'tint'" ></app-character-item>
+                <app-character-item [title]="'Batterie'" [value]="module_simple.data.dataRequired.oilPress" [mesure]="'%'" [icon]="'battery-quarter'" ></app-character-item>
               </div>
             </div>
           </div>
@@ -33,9 +34,9 @@
             </canvas>
           </div>
         </div>
-        <h1 class="text-center"> Plage horaire </h1>
+        <!-- <h1 class="text-center"> Plage horaire </h1>
         <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
-          <ngb-panel *ngFor="let mod of module.data" [id]="mod.id">
+          <ngb-panel *ngFor="let mod of trame" [id]="mod.">
             <ng-template ngbPanelTitle>{{mod.date_debut | date: 'dd MMMM yyyy à HH:mm'}} - {{mod.date_fin | date: 'dd MMMM yyyy à HH:mm'}}</ng-template>
             <ng-template ngbPanelContent>
                 <div class="row d-flex justify-content-center align-items-center text-center px-4">
@@ -52,7 +53,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr  *ngFor="let modul of mod.infos" class=" align-middle">
+                      <tr  *ngFor="let modul of mod." class=" align-middle">
                         <td scope="row">{{modul.date | date: 'HH:mm:ss'}}</td>
                         <td>{{modul.temperature}} °C</td>
                         <td>{{modul.fuel}} L</td>
@@ -70,10 +71,10 @@
         <ngb-pagination
           class="d-flex justify-content-center my-4"
           (pageChange)="page_change($event)"
-          [(page)]="module.pagination.page"
-          [pageSize]="module.pagination.limit"
-          [collectionSize]="module.pagination.totalCount">
-        </ngb-pagination>
+          [(page)]="trame.pagination.page"
+          [pageSize]="trame.pagination.limit"
+          [collectionSize]="trame.pagination.totalCount">
+        </ngb-pagination> -->
       </div>
     </ng-container>
   </div>

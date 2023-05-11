@@ -1,4 +1,6 @@
-<app-banner [title]="'Generators'"></app-banner>
+<app-banner
+  [title]="'Generators'"
+></app-banner>
 <section class="container">
   <div class="row d-flex justify-content-center align-items-center">
     <div class="col-sm-8 col-md-8 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
@@ -28,32 +30,32 @@
   </div>
 </section>
 <ng-container *ngIf="!loading">
-  <ng-container *ngIf="module_list.data.length;else empty_module">
+  <ng-container *ngIf="module_list.modules.length;else empty_module">
     <section class="container" *ngIf="display=='card'">
       <div class="row d-flex justify-content-center align-items-skretch">
-        <div class="col-sm-10 col-md-6 col-lg-4 col-xl-3" *ngFor="let module of module_list.data">
+        <div class="col-sm-10 col-md-6 col-lg-4 col-xl-3" *ngFor="let module of module_list.modules">
           <div class="card border-primary my-2">
             <!-- <img class="card-img-top" src="holder.js/100px180/" alt=""> -->
             <div class="card-body pb-0">
               <h4 class="card-title">
                 <span>{{module.stationName| truncate}}</span>
                 <button class="btn btn-outline-primary float-end"
-                  [ngClass]="{'text-primary': module.etat, 'bg-danger': !module.etat, 'text-light': !module.etat}">
-                  <i *ngIf="!module.etat" class="fa fa-power-off "></i>
-                  <i *ngIf="module.etat" class="fa fa-circle-o-notch fa-spin "></i>
+                  [ngClass]="{'text-primary': module.status!='NOT_RUNNING/FAULT', 'bg-danger': module.status=='NOT_RUNNING/FAULT', 'text-light': module.status=='NOT_RUNNING/FAULT'}">
+                  <i *ngIf="module.status=='NOT_RUNNING/FAULT'" class="fa fa-power-off "></i>
+                  <i *ngIf="module.status!='NOT_RUNNING/FAULT'" class="fa fa-circle-o-notch fa-spin "></i>
                 </button>
               </h4>
               <div class="row d-flex justify-content-between">
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.lastData.data.fuel}} L</span>
+                  <span>{{module.dataRequired.fuel}}</span>
                   <i class="fa fa-tint mx-2"></i>
                 </div>
                 <div class="col-sm-8 col-md-6">
-                  <span>{{module.lastData.data.phase1}}</span>
+                  <span>{{module.dataRequired.ph1}}</span>
                   <i class="fa fa-battery-quarter mx-2"></i>
                 </div>
                 <div class="col-sm-8 col-md-8">
-                  <span>{{module.lastData.data.temperature}} °C</span>
+                  <span>{{module.dataRequired.temp}}</span>
                   <i class="fa fa-thermometer-quarter mx-2"></i>
                 </div>
               </div>
@@ -62,28 +64,36 @@
                     class="fa fa-plus"></i></button>
               </div>
               <div class="text-center mb-0">
-                <small style="font-size: x-small;"> fonctionne depuis
+                <small style="font-size: x-small;" *ngIf="(module.elapse_total.years||module.elapse_total.months||module.elapse_total.days||module.elapse_total.hours||module.elapse_total.minutes||module.elapse_total.seconds);else no_function"> fonctionne depuis
                   <strong>
-                    <ng-container *ngIf="module.duree_fonctionnement_format.years">
-                      {{module.duree_fonctionnement_format.years}} an(s)
+                    <ng-container *ngIf="module.elapse_total.years">
+                      {{module.elapse_total.years}} an(s)
                     </ng-container>
-                    <ng-container *ngIf="module.duree_fonctionnement_format.months">
-                      {{module.duree_fonctionnement_format.months}} mois
+                    <ng-container *ngIf="module.elapse_total.months">
+                      {{module.elapse_total.months}} mois
                     </ng-container>
-                    <ng-container *ngIf="module.duree_fonctionnement_format.days">
-                      {{module.duree_fonctionnement_format.days}} jour(s)
+                    <ng-container *ngIf="module.elapse_total.days">
+                      {{module.elapse_total.days}} jour(s)
                     </ng-container>
-                    <ng-container *ngIf="module.duree_fonctionnement_format.hours">
-                      {{module.duree_fonctionnement_format.hours}} heure(s)
+                    <ng-container *ngIf="module.elapse_total.hours">
+                      {{module.elapse_total.hours}} heure(s)
                     </ng-container>
-                    <ng-container *ngIf="module.duree_fonctionnement_format.minutes">
-                      {{module.duree_fonctionnement_format.minutes}} minute(s)
+                    <ng-container *ngIf="module.elapse_total.minutes">
+                      {{module.elapse_total.minutes}} minute(s)
                     </ng-container>
-                    <ng-container *ngIf="module.duree_fonctionnement_format.seconds">
-                      {{module.duree_fonctionnement_format.seconds}} seconde(s)
+                    <ng-container *ngIf="module.elapse_total.seconds">
+                      {{module.elapse_total.seconds}} seconde(s)
                     </ng-container>
                   </strong>
                 </small>
+                <ng-template #no_function>
+                  <small style="font-size: x-small">
+                    <strong>
+                      N'a jamais été mis en fonction
+                    </strong>
+                  </small>
+                </ng-template>
+
               </div>
             </div>
           </div>
@@ -108,46 +118,52 @@
               <th>Durée de fonctionnement</th>
               <th>Phase 1</th>
               <th>Phase 2</th>
+              <th>Phase 3</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let module of module_list.data" class=" align-middle">
+            <tr *ngFor="let module of module_list.modules" class=" align-middle">
               <td scope="row">{{module.stationName}}</td>
               <td>
-                <span *ngIf="!module.etat" class="text-danger">
+                <span *ngIf="module.status=='NOT_RUNNING/FAULT'" class="text-danger">
                   <i class="fa fa-power-off mx-2"></i> En Arrêt
                 </span>
-                <span *ngIf="module.etat" class="text-success">
+                <span *ngIf="module.status!='NOT_RUNNING/FAULT'" class="text-success">
                   <i class="fa fa-circle-o-notch fa-spin "></i> En fonction
                 </span>
               </td>
-              <td>{{module.lastData.data.temperature}} °C</td>
-              <td>{{module.lastData.data.fuel}} L</td>
-              <td>{{module.lastData.data.frequence}} Mhz</td>
-              <td>{{module.lastData.data.pression_huile}} Bar</td>
+              <td>{{module.dataRequired.temp}}</td>
+              <td>{{module.dataRequired.fuel}}</td>
+              <td>{{module.dataRequired.freq}}</td>
+              <td>{{module.dataRequired.oilPress}}</td>
               <td>
-                <ng-container *ngIf="module.duree_fonctionnement_format.years">
-                  {{module.duree_fonctionnement_format.years}} an(s)
+                <ng-container *ngIf="module.elapse_total.years">
+                  {{module.elapse_total.years}} an(s)
                 </ng-container>
-                <ng-container *ngIf="module.duree_fonctionnement_format.months">
-                  {{module.duree_fonctionnement_format.months}} mois
+                <ng-container *ngIf="module.elapse_total.months">
+                  {{module.elapse_total.months}} mois
                 </ng-container>
-                <ng-container *ngIf="module.duree_fonctionnement_format.days">
-                  {{module.duree_fonctionnement_format.days}} jour(s)
+                <ng-container *ngIf="module.elapse_total.days">
+                  {{module.elapse_total.days}} jour(s)
                 </ng-container>
-                <ng-container *ngIf="module.duree_fonctionnement_format.hours">
-                  {{module.duree_fonctionnement_format.hours}} heure(s)
+                <ng-container *ngIf="module.elapse_total.hours">
+                  {{module.elapse_total.hours}} heure(s)
                 </ng-container>
-                <ng-container *ngIf="module.duree_fonctionnement_format.minutes">
-                  {{module.duree_fonctionnement_format.minutes}} minute(s)
+                <ng-container *ngIf="module.elapse_total.minutes">
+                  {{module.elapse_total.minutes}} minute(s)
                 </ng-container>
-                <ng-container *ngIf="module.duree_fonctionnement_format.seconds">
-                  {{module.duree_fonctionnement_format.seconds}} seconde(s)
+                <ng-container *ngIf="module.elapse_total.seconds">
+                  {{module.elapse_total.seconds}} seconde(s)
                 </ng-container>
+                <ng-container *ngIf="!(module.elapse_total.years||module.elapse_total.months||module.elapse_total.days||module.elapse_total.hours||module.elapse_total.minutes||module.elapse_total.seconds)">
+                  N'a jamais été mis en fonction
+                </ng-container>
+
               </td>
-              <td>{{module.lastData.data.phase1}}</td>
-              <td>{{module.lastData.data.phase2}}</td>
+              <td>{{module.dataRequired.ph1}}</td>
+              <td>{{module.dataRequired.ph2}}</td>
+              <td>{{module.dataRequired.ph3}}</td>
               <td>
                 <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
                   voir plus <i class="fa fa-plus" aria-hidden="true"></i>

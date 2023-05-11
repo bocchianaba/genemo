@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ModuleService } from './services/module.service';
-import { Module_list } from '../shared/models/module.models';
 import { Observable } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ToastrService } from 'ngx-toastr';
+import { Module, Modules_Paginate } from '../shared/models/module.models';
+import { Data } from '../shared/models/pagination.model';
 
 @Component({
   selector: 'app-module',
@@ -14,10 +15,10 @@ export class ModuleComponent implements OnInit, OnDestroy {
 
   title = 'generator-manager';
   display: string='card'
-  modules$!: Observable<Module_list>
+  modules$!: Observable<Modules_Paginate>
   subscription: any;
   loading: boolean=false;
-  module_list!: Module_list;
+  module_list!: Modules_Paginate;
   limit=6
   search_name=""
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Module, Module_info } from 'src/app/shared/models/module.models';
+import { DataRequired, Module, Module_info } from 'src/app/shared/models/module.models';
 import { ModuleService } from '../../services/module.service';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -16,8 +16,6 @@ import { Data } from 'src/app/shared/models/pagination.model';
 export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
   events=[]
-  module$!: Observable<Data<Module>>
-  module!: Data<Module>
   id!: string|null
   module_subscription: any;
   err_message: any;
@@ -72,8 +70,10 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   };
 
   public lineChartType: ChartType = 'line';
-  module_simple$: any;
-  module_simple: any;
+  module_simple$!: Observable<Module_info>;
+  module_simple!: Module_info;
+  trames$!: Observable<DataRequired[]>;
+  trame!: DataRequired[];
   // fuel_data!: ChartConfiguration['data']=new ChartConfiguration['data']();
 
   constructor(
@@ -86,15 +86,15 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.module$=this.module_service.get_module(this.id)
+    this.trames$=this.module_service.get_module_trames(this.id)
     this.module_simple$=this.module_service.get_simple_module(this.id)
     this.loader.startBackground()
-    this.module_subscription=this.module$.subscribe(
+    this.module_subscription=this.trames$.subscribe(
       {
-        next:(mod)=>{
-          console.log({mod})
+        next:(trame)=>{
+          console.log({trame})
           this.loading=false
-          this.module=mod
+          this.trame=trame
           // this.fuel_data.labels=this.module.data.map(
           //   (mod)=>{
           //     let data: string[]=[]
