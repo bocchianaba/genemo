@@ -16,8 +16,28 @@ export interface Modules_Paginate{
   pagination: Pagination
 }
 
+export interface Trames{
+  data: Trame[]
+  pagination: Pagination
+}
+
 export interface Module_info{
   data: Module
+}
+
+export interface Trame {
+  id: string
+  temp: string
+  fuel: string
+  bat: string
+  ph1?: string
+  ph2?: string
+  ph3?: string
+  freq?: string
+  oilPress?: string
+  date: string
+  createdAt: string
+  idModule: string
 }
 
 export interface Position {

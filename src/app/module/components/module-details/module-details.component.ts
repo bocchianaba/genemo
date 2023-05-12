@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DataRequired, Module, Module_info } from 'src/app/shared/models/module.models';
+import { DataRequired, InfoVidange, Module_info, Trames } from 'src/app/shared/models/module.models';
 import { ModuleService } from '../../services/module.service';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -21,10 +21,10 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   err_message: any;
   loading: boolean=true;
 
-  public lineChartData: ChartConfiguration['data'] = {
+  public fuel_lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [ 65, 59, 80, 81, 56, 55, 40 ],
+        data: [ 165, 200, 150, 251, 45, 687, 142 ],
         label: 'Fuel',
         backgroundColor: 'rgba(148,159,177,0.2)',
         borderColor: 'rgba(148,159,177,1)',
@@ -33,18 +33,12 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(148,159,177,0.8)',
         fill: 'origin',
-      },
-      {
-        data: [ 28, 48, 40, 19, 86, 27, 90 ],
-        label: 'Battérie',
-        backgroundColor: 'rgba(77,83,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(77,83,96,1)',
-        fill: 'origin',
-      },
+      }
+    ],
+    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+  };
+  public temperature_lineChartData: ChartConfiguration['data'] = {
+    datasets: [
       {
         data: [ 180, 480, 770, 90, 1000, 270, 400 ],
         label: 'Température',
@@ -60,7 +54,38 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     ],
     labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
   };
-
+  public battery_lineChartData: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [ 28, 48, 40, 19, 86, 27, 90 ],
+        label: 'Battérie',
+        backgroundColor: 'rgba(77,83,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      }
+    ],
+    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+  };
+  public phase_lineChartData: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [ 65, 59, 80, 81, 56, 55, 40 ],
+        label: 'Phase',
+        backgroundColor: 'rgba(148,159,177,0.2)',
+        borderColor: 'rgba(148,159,177,1)',
+        pointBackgroundColor: 'rgba(148,159,177,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+        fill: 'origin',
+      }
+    ],
+    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+  };
   public lineChartOptions: ChartConfiguration['options'] = {
     elements: {
       line: {
@@ -72,8 +97,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   public lineChartType: ChartType = 'line';
   module_simple$!: Observable<Module_info>;
   module_simple!: Module_info;
-  trames$!: Observable<DataRequired[]>;
-  trame!: DataRequired[];
+  trames$!: Observable<Trames>;
+  trame!: Trames;
+  vidanges$!: Observable<Data<InfoVidange>>;
   // fuel_data!: ChartConfiguration['data']=new ChartConfiguration['data']();
 
   constructor(
@@ -89,7 +115,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.trames$=this.module_service.get_module_trames(this.id)
     this.module_simple$=this.module_service.get_simple_module(this.id)
     this.loader.startBackground()
-    this.module_subscription=this.trames$.subscribe(
+    this.trames$.subscribe(
       {
         next:(trame)=>{
           console.log({trame})
@@ -120,6 +146,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         }
       }
     )
+    this.vidanges$=this.module_service.get_module_vidanges(this.id)
     this.module_subscription=this.module_simple$.subscribe(
       {
         next:(mod: Module_info)=>{
@@ -149,6 +176,38 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
   page_change(page: number){
     console.log(page)
+    this.trames$=this.module_service.get_module_trames(this.id, page)
+    this.trames$.subscribe(
+      {
+        next:(trame)=>{
+          console.log({trame})
+          this.loading=false
+          this.trame=trame
+          // this.fuel_data.labels=this.module.data.map(
+          //   (mod)=>{
+          //     let data: string[]=[]
+          //     mod.infos.map(
+          //       info=>{
+          //         data.push(info.date)
+          //       }
+          //     )
+          //     return data
+          //   }
+          // )
+          // console.log({labels: this.fuel_data.labels})
+        },
+        error:(err)=>{
+          console.log({err})
+          this.err_message=err.error.message
+          this.loading=false
+          this.loader.stopBackground()
+        },
+        complete:()=>{
+          this.loading=false
+          this.loader.stopBackground()
+        }
+      }
+    )
   }
 
 }

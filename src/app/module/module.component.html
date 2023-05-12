@@ -38,11 +38,18 @@
             <!-- <img class="card-img-top" src="holder.js/100px180/" alt=""> -->
             <div class="card-body pb-0">
               <h4 class="card-title">
+                <button class="btn btn-outline-primary float-start" *ngIf="module.status.includes('FAULT')"
+                  [ngClass]="{'text-primary': !module.status.includes('FAULT'), 'bg-danger': module.status.includes('FAULT'), 'text-light': module.status.includes('FAULT')}">
+                  <i class="fa fa-exclamation-triangle"></i>
+                </button>
                 <span>{{module.stationName| truncate}}</span>
-                <button class="btn btn-outline-primary float-end"
-                  [ngClass]="{'text-primary': module.status!='NOT_RUNNING/FAULT', 'bg-danger': module.status=='NOT_RUNNING/FAULT', 'text-light': module.status=='NOT_RUNNING/FAULT'}">
-                  <i *ngIf="module.status=='NOT_RUNNING/FAULT'" class="fa fa-power-off "></i>
-                  <i *ngIf="module.status!='NOT_RUNNING/FAULT'" class="fa fa-circle-o-notch fa-spin "></i>
+                <button class="btn btn-outline-primary float-end" *ngIf="!module.status.includes('STOPPED')"
+                  [ngClass]="{'text-primary': !module.status.includes('NOT_RUNNING'), 'bg-danger': module.status.includes('NOT_RUNNING'), 'text-light': module.status.includes('NOT_RUNNING')}">
+                  <i *ngIf="module.status.includes('NOT_RUNNING')" class="fa fa-power-off "></i>
+                  <i *ngIf="!module.status.includes('NOT_RUNNING')" class="fa fa-circle-o-notch fa-spin "></i>
+                </button>
+                <button class="btn btn-outline-danger float-start" *ngIf="module.status.includes('STOPPED')">
+                  <i class="fa fa-arrow-down"></i>
                 </button>
               </h4>
               <div class="row d-flex justify-content-between">
@@ -50,13 +57,25 @@
                   <span>{{module.dataRequired.fuel}}</span>
                   <i class="fa fa-tint mx-2"></i>
                 </div>
-                <div class="col-sm-8 col-md-6">
-                  <span>{{module.dataRequired.ph1}}</span>
+                <div class="col-sm-8 col-md-6 little_text">
+                  <span>{{module.dataRequired.bat??'0'}}</span>
                   <i class="fa fa-battery-quarter mx-2"></i>
                 </div>
-                <div class="col-sm-8 col-md-8">
+                <div class="col-sm-8 col-md-6 little_text">
                   <span>{{module.dataRequired.temp}}</span>
                   <i class="fa fa-thermometer-quarter mx-2"></i>
+                </div>
+                <div class="col-sm-8 col-md-6 little_text">
+                  <span>{{module.dataRequired.ph1}}</span>
+                  <i class="fa fa-bolt mx-2"></i>
+                </div>
+                <div class="col-sm-8 col-md-6 little_text">
+                  <span>{{module.dataRequired.ph2}}</span>
+                  <i class="fa fa-bolt mx-2"></i>
+                </div>
+                <div class="col-sm-8 col-md-6 little_text">
+                  <span>{{module.dataRequired.ph3}}</span>
+                  <i class="fa fa-bolt mx-2"></i>
                 </div>
               </div>
               <div class="text-center">
