@@ -11,6 +11,7 @@ import { ModuleService } from './services/module.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgChartsModule } from 'ng2-charts';
 import { ModuleItemComponent } from './components/module-item/module-item.component';
+import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ModuleItemComponent } from './components/module-item/module-item.compon
     CommonModule,
     ModuleRoutingModule,
     SharedModule,
-    NgChartsModule
+    NgChartsModule,
+    NgbDatepickerModule
   ],
   providers:[
     ModuleService,

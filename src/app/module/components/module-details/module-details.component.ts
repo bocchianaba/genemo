@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { Data } from 'src/app/shared/models/pagination.model';
+import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-module-details',
@@ -106,9 +107,13 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     private module_service: ModuleService,
     private route: ActivatedRoute,
     private toast: ToastrService,
-    private loader: NgxUiLoaderService
+    private loader: NgxUiLoaderService,
+    private calendar: NgbCalendar,
+    public formatter: NgbDateParserFormatter
   ) {
     this.id=this.route.snapshot.paramMap.get('id')
+		this.fromDate = calendar.getToday();
+		this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
 
   ngOnInit(): void {
@@ -210,4 +215,48 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     )
   }
 
+  hoveredDate: NgbDate | null = null;
+
+	fromDate: NgbDate | null;
+	toDate: NgbDate | null;
+
+	onDateSelection(date: NgbDate) {
+		if (!this.fromDate && !this.toDate) {
+			this.fromDate = date;
+		} else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
+			this.toDate = date;
+		} else {
+			this.toDate = null;
+			this.fromDate = date;
+		}
+	}
+
+	isHovered(date: NgbDate) {
+		return (
+			this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate)
+		);
+	}
+
+	isInside(date: NgbDate) {
+		return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+	}
+
+	isRange(date: NgbDate) {
+		return (
+			date.equals(this.fromDate) ||
+			(this.toDate && date.equals(this.toDate)) ||
+			this.isInside(date) ||
+			this.isHovered(date)
+		);
+	}
+
+	validateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
+		const parsed = this.formatter.parse(input);
+		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
+	}
+  filter_date(){
+    console.log({from: this.fromDate,to:this.toDate})
+    this.trames$=this.module_service.get_module_trames(this.id,1,10,new Date(this.fromDate?.year??0,this.fromDate?.month??1-1,this.fromDate?.day),new Date(this.toDate?.year??0,this.toDate?.month??1-1,this.toDate?.day))
+    this.vidanges$=this.module_service.get_module_vidanges(this.id,1,10,new Date(this.fromDate?.year??0,this.fromDate?.month??1-1,this.fromDate?.day),new Date(this.toDate?.year??0,this.toDate?.month??1-1,this.toDate?.day))
+  }
 }
