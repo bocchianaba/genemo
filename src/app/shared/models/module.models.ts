@@ -9,6 +9,7 @@ export interface Module {
   elapse: Elapse
   elapse_total: ElapseTotal
   infoVidange: InfoVidange
+  lastInfoTrame: InfoTrame
 }
 
 export interface Modules_Paginate{
@@ -25,18 +26,34 @@ export interface Module_info{
   data: Module
 }
 
+export interface InfoTrame {
+  id: string
+  temp: number
+  fuel: number
+  ph1: number
+  ph2: number
+  ph3: number
+  freq: number
+  oilPress: number
+  date: any
+  bat: number
+  createdAt: string
+  idModule: string
+}
+
+
 export interface Trame {
   id: string
-  temp: string
-  fuel: string
-  bat: string
-  ph1?: string
-  ph2?: string
-  ph3?: string
-  freq?: string
-  oilPress?: string
-  date: string
-  createdAt: string
+  temp: number
+  fuel: number
+  bat: number
+  ph1?: number
+  ph2?: number
+  ph3?: number
+  freq?: number
+  oilPress?: number
+  date: Date
+  createdAt: Date
   idModule: string
 }
 
@@ -80,7 +97,7 @@ export interface InfoVidange {
   id:string
   remarque: string
   date: Date
-  CreatedAt: Date
+  createdAt: Date
   ph3: string
   days: string
   idModule: string

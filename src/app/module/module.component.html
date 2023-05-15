@@ -1,9 +1,7 @@
-<app-banner
-  [title]="'Generators'"
-></app-banner>
+<app-banner [title]="'Generators'"></app-banner>
 <section class="container">
   <div class="row d-flex justify-content-center align-items-center">
-    <div class="col-sm-8 col-md-8 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
+    <div class="col-sm-8 col-md-6 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
       <div class="input-group my-2 w-100">
         <input type="search" (keyup)="search_module()" [(ngModel)]="search_name" class="form-control" id="search_bar"
           placeholder="Rechercher par ici ...">
@@ -12,19 +10,20 @@
         </button>
       </div>
     </div>
-    <div class="col-sm-2 col-md-2 col-lg-4 col-xl-4 d-flex justify-content-center align-items-center">
-      <button
-        class="btn btn-primary"
-        placement="top" ngbTooltip="Afficher les modules en carte" (click)="display='card'">
-        <i class="fa fa-th"></i>
+    <div class="col-sm-2 col-md-4 col-lg-4 col-xl-4 d-flex justify-content-center align-items-center">
+      <button class="btn btn-primary ml-sm-2 my-2 d-flex align-items-center" placement="top" ngbTooltip="Afficher les modules en carte"
+        (click)="display='card'">
+        <i class="fa fa-th mx-2"></i>
+        <div class="d-none d-md-block">Carte</div>
       </button>
-      <button
-        class="btn btn-primary mx-lg-4 mx-md-2"
-        (click)="display='list'" placement="top" ngbTooltip="Afficher les modules en liste">
-        <i class="fa fa-list"></i>
+      <button class="btn btn-primary mx-sm-2 mx-lg-4 mx-md-2 my-2 d-flex align-items-center" (click)="display='list'" placement="top"
+        ngbTooltip="Afficher les modules en liste">
+        <i class="fa fa-list mx-2"></i>
+        <div class="d-none d-md-block">Liste</div>
       </button>
-      <button class="btn btn-primary" placement="top" ngbTooltip="Plus d'options">
-        <i class="fa fa-ellipsis-v"></i>
+      <button class="btn btn-primary my-2 d-flex align-items-center" placement="top" ngbTooltip="Plus d'options">
+        <i class="fa fa-ellipsis-v mx-2"></i>
+        <div class="d-none d-md-block">Plus</div>
       </button>
     </div>
   </div>
@@ -33,57 +32,60 @@
   <ng-container *ngIf="module_list.modules.length;else empty_module">
     <section class="container" *ngIf="display=='card'">
       <div class="row d-flex justify-content-center align-items-skretch">
-        <div class="col-sm-10 col-md-6 col-lg-4 col-xl-3" *ngFor="let module of module_list.modules">
+        <div class="col-xs-10 col-sm-6 col-md-6 col-lg-4" *ngFor="let module of module_list.modules">
           <div class="card border-primary my-2">
             <!-- <img class="card-img-top" src="holder.js/100px180/" alt=""> -->
             <div class="card-body pb-0">
               <h4 class="card-title">
-                <button class="btn btn-outline-primary float-start" *ngIf="module.status.includes('FAULT')"
-                  [ngClass]="{'text-primary': !module.status.includes('FAULT'), 'bg-danger': module.status.includes('FAULT'), 'text-light': module.status.includes('FAULT')}">
-                  <i class="fa fa-exclamation-triangle"></i>
+                <button class="btn btn-outline-warning float-start mx-2 bg-white" [ngbTooltip]="'Il y a défaut'" *ngIf="module?.status?.includes('FAULT')">
+                  <i class="fa fa-exclamation-triangle mx-2 text-warning"></i>
                 </button>
                 <span>{{module.stationName| truncate}}</span>
-                <button class="btn btn-outline-primary float-end" *ngIf="!module.status.includes('STOPPED')"
-                  [ngClass]="{'text-primary': !module.status.includes('NOT_RUNNING'), 'bg-danger': module.status.includes('NOT_RUNNING'), 'text-light': module.status.includes('NOT_RUNNING')}">
-                  <i *ngIf="module.status.includes('NOT_RUNNING')" class="fa fa-power-off "></i>
-                  <i *ngIf="!module.status.includes('NOT_RUNNING')" class="fa fa-circle-o-notch fa-spin "></i>
+                <button class="btn btn-outline-primary float-end" [ngbTooltip]="(module?.status?.includes('NOT_RUNNING'))?'Arrêt':'En cours'" *ngIf="!module?.status?.includes('STOPPED')"
+                  [ngClass]="{'text-primary': !module?.status?.includes('NOT_RUNNING'), 'bg-danger': module?.status?.includes('NOT_RUNNING'), 'text-light': module?.status?.includes('NOT_RUNNING'), 'bg-white': !module?.status?.includes('NOT_RUNNING')}">
+                  <i *ngIf="module?.status?.includes('NOT_RUNNING')" class="fa fa-power-off"></i>
+                  <i *ngIf="!module?.status?.includes('NOT_RUNNING')" class="fa fa-circle-o-notch fa-spin"></i>
                 </button>
-                <button class="btn btn-outline-danger float-start" *ngIf="module.status.includes('STOPPED')">
+                <button class="btn btn-outline-danger float-start bg-white mx-2" [ngbTooltip]="'Interrompu'" *ngIf="module?.status?.includes('STOPPED')">
                   <i class="fa fa-arrow-down"></i>
                 </button>
               </h4>
               <div class="row d-flex justify-content-between">
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.dataRequired.fuel}}</span>
                   <i class="fa fa-tint mx-2"></i>
+                  <span>{{module.lastInfoTrame.fuel}}</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.dataRequired.bat??'0'}}</span>
                   <i class="fa fa-battery-quarter mx-2"></i>
+                  <span>{{module?.lastInfoTrame?.bat??'0'}}</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.dataRequired.temp}}</span>
                   <i class="fa fa-thermometer-quarter mx-2"></i>
+                  <span>{{module.lastInfoTrame.temp}}</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.dataRequired.ph1}}</span>
                   <i class="fa fa-bolt mx-2"></i>
+                  <span>{{module.lastInfoTrame.ph1}}</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.dataRequired.ph2}}</span>
                   <i class="fa fa-bolt mx-2"></i>
+                  <span>{{module.lastInfoTrame.ph2}}</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
-                  <span>{{module.dataRequired.ph3}}</span>
                   <i class="fa fa-bolt mx-2"></i>
+                  <span>{{module.lastInfoTrame.ph3}}</span>
                 </div>
               </div>
               <div class="text-center">
-                <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">Voir plus <i
-                    class="fa fa-plus"></i></button>
+                <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
+                  <i class="fa fa-plus mx-2"></i>
+                  Voir plus
+                </button>
               </div>
               <div class="text-center mb-0">
-                <small style="font-size: x-small;" *ngIf="(module.elapse_total.years||module.elapse_total.months||module.elapse_total.days||module.elapse_total.hours||module.elapse_total.minutes||module.elapse_total.seconds);else no_function"> fonctionne depuis
+                <small style="font-size: x-small;"
+                  *ngIf="(module.elapse_total.years||module.elapse_total.months||module.elapse_total.days||module.elapse_total.hours||module.elapse_total.minutes||module.elapse_total.seconds);else no_function">
+                  fonctionne depuis
                   <strong>
                     <ng-container *ngIf="module.elapse_total.years">
                       {{module.elapse_total.years}} an(s)
@@ -112,7 +114,16 @@
                     </strong>
                   </small>
                 </ng-template>
-
+              </div>
+              <div class="text-center my-2 alert alert-info d-flex justify-content-center align-items-center" *ngIf="module.infoVidange?.hasOwnProperty('id')">
+                <div class="col-1">
+                  <i class="fa fa-info-circle"></i>
+                </div>
+                <small class="col-11">
+                  <strong style="text-align: justify;">
+                    {{module.infoVidange.remarque}}, lors de la vidange du {{module.infoVidange.date | date: 'dd MMMM yyyy HH:mm:ss'}}
+                  </strong>
+                </small>
               </div>
             </div>
           </div>
@@ -138,6 +149,8 @@
               <th>Phase 1</th>
               <th>Phase 2</th>
               <th>Phase 3</th>
+              <th>Dernière vidange</th>
+              <th>Remarque</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -145,17 +158,17 @@
             <tr *ngFor="let module of module_list.modules" class=" align-middle">
               <td scope="row">{{module.stationName}}</td>
               <td>
-                <span *ngIf="module.status=='NOT_RUNNING/FAULT'" class="text-danger">
+                <span *ngIf="module?.status=='NOT_RUNNING/FAULT'" class="text-danger">
                   <i class="fa fa-power-off mx-2"></i> En Arrêt
                 </span>
-                <span *ngIf="module.status!='NOT_RUNNING/FAULT'" class="text-success">
+                <span *ngIf="module?.status!='NOT_RUNNING/FAULT'" class="text-success">
                   <i class="fa fa-circle-o-notch fa-spin "></i> En fonction
                 </span>
               </td>
-              <td>{{module.dataRequired.temp}}</td>
-              <td>{{module.dataRequired.fuel}}</td>
-              <td>{{module.dataRequired.freq}}</td>
-              <td>{{module.dataRequired.oilPress}}</td>
+              <td>{{module.lastInfoTrame.temp}}</td>
+              <td>{{module.lastInfoTrame.fuel}}</td>
+              <td>{{module.lastInfoTrame.freq}}</td>
+              <td>{{module.lastInfoTrame.oilPress}}</td>
               <td>
                 <ng-container *ngIf="module.elapse_total.years">
                   {{module.elapse_total.years}} an(s)
@@ -175,17 +188,20 @@
                 <ng-container *ngIf="module.elapse_total.seconds">
                   {{module.elapse_total.seconds}} seconde(s)
                 </ng-container>
-                <ng-container *ngIf="!(module.elapse_total.years||module.elapse_total.months||module.elapse_total.days||module.elapse_total.hours||module.elapse_total.minutes||module.elapse_total.seconds)">
+                <ng-container
+                  *ngIf="!(module.elapse_total.years||module.elapse_total.months||module.elapse_total.days||module.elapse_total.hours||module.elapse_total.minutes||module.elapse_total.seconds)">
                   N'a jamais été mis en fonction
                 </ng-container>
 
               </td>
-              <td>{{module.dataRequired.ph1}}</td>
-              <td>{{module.dataRequired.ph2}}</td>
-              <td>{{module.dataRequired.ph3}}</td>
+              <td>{{module.lastInfoTrame.ph1}}</td>
+              <td>{{module.lastInfoTrame.ph2}}</td>
+              <td>{{module.lastInfoTrame.ph3}}</td>
+              <td>{{module.infoVidange.date | date:'dd MMMM yyyy à hh:MM:ss'}}</td>
+              <td>{{module.infoVidange.remarque}}</td>
               <td>
                 <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
-                  voir plus <i class="fa fa-plus" aria-hidden="true"></i>
+                  <i class="fa fa-plus mx-2" aria-hidden="true"></i> voir plus
                 </button>
               </td>
             </tr>

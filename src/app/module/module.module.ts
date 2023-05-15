@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { ModuleRoutingModule } from './module-routing.module';
 import { ModuleComponent } from './module.component';
@@ -13,6 +13,11 @@ import { NgChartsModule } from 'ng2-charts';
 import { ModuleItemComponent } from './components/module-item/module-item.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { environment } from 'src/environments/environment';
+
+const config: SocketIoConfig = { url: environment.backend_socket_url, options: {} };
+
 @NgModule({
   declarations: [
     ModuleComponent,
@@ -25,11 +30,13 @@ import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
     ModuleRoutingModule,
     SharedModule,
     NgChartsModule,
-    NgbDatepickerModule
+    NgbDatepickerModule,
+    SocketIoModule.forRoot(config)
   ],
   providers:[
     ModuleService,
-    ToastrService
+    ToastrService,
+    DatePipe
   ]
 })
 export class ModuleModule { }

@@ -1,5 +1,6 @@
+import { Module, Trame } from './../../../shared/models/module.models';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { DataRequired, InfoVidange, Module_info, Trames } from 'src/app/shared/models/module.models';
 import { ModuleService } from '../../services/module.service';
 import { ActivatedRoute } from '@angular/router';
@@ -8,7 +9,12 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { Data } from 'src/app/shared/models/pagination.model';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { Socket } from 'ngx-socket-io';
+import { DatePipe } from '@angular/common';
+import { AutoUnsubscribe } from 'src/app/shared/decorators/auto-unsubscribe.decorator';
+import { Data_socket } from 'src/app/shared/models/module-socket.models';
 
+@AutoUnsubscribe
 @Component({
   selector: 'app-module-details',
   templateUrl: './module-details.component.html',
@@ -71,35 +77,27 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     ],
     labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
   };
-  public phase_lineChartData: ChartConfiguration['data'] = {
-    datasets: [
-      {
-        data: [ 65, 59, 80, 81, 56, 55, 40 ],
-        label: 'Phase',
-        backgroundColor: 'rgba(148,159,177,0.2)',
-        borderColor: 'rgba(148,159,177,1)',
-        pointBackgroundColor: 'rgba(148,159,177,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(148,159,177,0.8)',
-        fill: 'origin',
-      }
-    ],
-    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
-  };
   public lineChartOptions: ChartConfiguration['options'] = {
     elements: {
       line: {
         tension: 0.5
+      }
+    },
+    scales: {
+      x:{
+        ticks:{
+          callback: (value)=>{
+            return this.date_pipe.transform(value, "dd MMMM yyyy hh:mm:ss")
+          }
+        }
       }
     }
   };
 
   public lineChartType: ChartType = 'line';
   module_simple$!: Observable<Module_info>;
-  module_simple!: Module_info;
+  module_simple!: Module_info
   trames$!: Observable<Trames>;
-  trame!: Trames;
   vidanges$!: Observable<Data<InfoVidange>>;
   // fuel_data!: ChartConfiguration['data']=new ChartConfiguration['data']();
 
@@ -109,7 +107,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     private toast: ToastrService,
     private loader: NgxUiLoaderService,
     private calendar: NgbCalendar,
-    public formatter: NgbDateParserFormatter
+    public formatter: NgbDateParserFormatter,
+    private socket: Socket,
+    private date_pipe: DatePipe
   ) {
     this.id=this.route.snapshot.paramMap.get('id')
 		this.fromDate = calendar.getToday();
@@ -118,65 +118,48 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.trames$=this.module_service.get_module_trames(this.id)
+    this.trames$.subscribe({
+      next: (trames: Trames)=>{
+        this.fuel_lineChartData.labels=trames.data.map((trame: Trame)=> trame.date??trame.createdAt)
+        this.fuel_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.fuel)
+        this.temperature_lineChartData.labels=trames.data.map((trame: Trame)=> trame.date??trame.createdAt)
+        this.temperature_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.temp)
+        this.battery_lineChartData.labels=trames.data.map((trame: Trame)=> trame.date??trame.createdAt)
+        this.battery_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.bat)
+      }
+    })
     this.module_simple$=this.module_service.get_simple_module(this.id)
-    this.loader.startBackground()
-    this.trames$.subscribe(
-      {
-        next:(trame)=>{
-          console.log({trame})
-          this.loading=false
-          this.trame=trame
-          // this.fuel_data.labels=this.module.data.map(
-          //   (mod)=>{
-          //     let data: string[]=[]
-          //     mod.infos.map(
-          //       info=>{
-          //         data.push(info.date)
-          //       }
-          //     )
-          //     return data
-          //   }
-          // )
-          // console.log({labels: this.fuel_data.labels})
-        },
-        error:(err)=>{
-          console.log({err})
-          this.err_message=err.error.message
-          this.loading=false
-          this.loader.stopBackground()
-        },
-        complete:()=>{
-          this.loading=false
-          this.loader.stopBackground()
-        }
-      }
-    )
+    this.module_simple$.subscribe(mod=> this.module_simple=mod)
     this.vidanges$=this.module_service.get_module_vidanges(this.id)
-    this.module_subscription=this.module_simple$.subscribe(
-      {
-        next:(mod: Module_info)=>{
-          console.log({mod})
-          this.loading=false
-          this.module_simple=mod
-        },
-        error:(err:any)=>{
-          console.log({err})
-          this.err_message=err.error.message
-          this.loading=false
-          this.loader.stopBackground()
-        },
-        complete:()=>{
-          this.loading=false
-          this.loader.stopBackground()
-        }
-      }
-    )
-  }
 
+    this.socket.on("incomingTrame",(data: Data_socket)=>{
+      alert("nouvelle trame")
+      console.log("trame event",{data})
+      this.trames$.pipe(
+        map((trames: Trames)=>{
+          trames.data.unshift({...data.trame, id: data.trame._id})
+          trames.data.slice(0,10)
+          if(data.trame.idModule==this.module_simple.data.id) {
+            this.toast.info("Le module vient d'envoyer une nouvelle trame")
+          }
+          return trames
+        })
+      ).subscribe()
+    })
+    this.socket.on("vidangeCreated", (data: Module)=>{
+      alert("vidange créer")
+      console.log({data})
+      this.module_simple$.pipe(
+        map((module: Module_info)=>{
+          this.toast.info("Le module "+data.stationName+" est en pleine vidange !")
+          module.data={...data}
+          return module
+        })
+      ).subscribe()
+    })
+  }
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
-    this.module_subscription.unsubscribe()
+
   }
 
   page_change(page: number){
@@ -186,8 +169,6 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       {
         next:(trame)=>{
           console.log({trame})
-          this.loading=false
-          this.trame=trame
           // this.fuel_data.labels=this.module.data.map(
           //   (mod)=>{
           //     let data: string[]=[]
@@ -204,12 +185,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         error:(err)=>{
           console.log({err})
           this.err_message=err.error.message
-          this.loading=false
-          this.loader.stopBackground()
         },
         complete:()=>{
-          this.loading=false
-          this.loader.stopBackground()
         }
       }
     )

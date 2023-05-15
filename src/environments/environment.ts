@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  backend_url: 'http://139.59.208.55:4000'
+  backend_url: 'http://139.59.208.55:4000',
+  backend_socket_url: 'http://139.59.208.55:4010'
 };
 
 /*

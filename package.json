@@ -25,6 +25,7 @@
     "chart.js": "^4.3.0",
     "font-awesome": "^4.7.0",
     "ng2-charts": "^4.1.1",
+    "ngx-socket-io": "^4.5.1",
     "ngx-toastr": "^14.3.0",
     "ngx-ui-loader": "^13.0.0",
     "rxjs": "~7.5.0",

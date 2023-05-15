@@ -1,273 +1,273 @@
-<app-banner [title]="module_simple.data.stationName"
-  [description]="'A déjà fonctionner '+module_simple.data.elapse_total.seconds+' secondes, depuis la création <br> Fonctionne '+module_simple.data.elapse.seconds+' secondes, depuis le dernier arrêt'"></app-banner>
-<section>
-  <div *ngIf="trames$ |async ; else no_module" class="row d-flex justify-content-center p-4 m-0">
-    <ng-container>
-      <div class="col-xs-11 col-sm-10 col-md-4 text-center">
+<ng-container *ngIf="module_simple$| async as module_simple">
+  <app-banner [title]="module_simple.data.stationName"
+    [description]="'A déjà fonctionner '+module_simple.data.elapse_total.years+' ans '+module_simple.data.elapse_total.months+' mois '+module_simple.data.elapse_total.days+' jours '+module_simple.data.elapse_total.hours+' h '+module_simple.data.elapse_total.minutes+' min '+module_simple.data.elapse_total.seconds+' s, depuis la création <br> Fonctionne '+module_simple.data.elapse.years+' ans '+module_simple.data.elapse.months+' mois '+module_simple.data.elapse.days+' jours '+module_simple.data.elapse.hours+' h '+module_simple.data.elapse.minutes+' min '+module_simple.data.elapse.seconds+' s, depuis le dernier arrêt'"></app-banner>
+  <section>
+    <div *ngIf="trames$ |async ; else no_module" class="row d-flex justify-content-center p-4 m-0">
+      <ng-container>
+        <div class="col-xs-11 col-sm-10 col-md-2 text-center">
+          <a routerLink="/modules" class="mb-4 pb-4 text-center">
+            <i class="fa fa-caret-left" aria-hidden="true"></i>
+            Liste des modules
+          </a>
+          <div class="text-center mt-4">
+            <form class="row row-cols-sm-auto justify-content-center">
+              <div class="col-12 my-2">
+                <div class="dp-hidden position-absolute">
+                  <div class="input-group">
+                    <input
+                      name="datepicker"
+                      class="form-control"
+                      ngbDatepicker
+                      #datepicker="ngbDatepicker"
+                      [autoClose]="'outside'"
+                      (dateSelect)="onDateSelection($event)"
+                      [displayMonths]="2"
+                      [dayTemplate]="t"
+                      outsideDays="hidden"
+                      [startDate]="fromDate!"
+                      tabindex="-1"
+                    />
+                    <ng-template #t let-date let-focused="focused">
+                      <span
+                        class="custom-day"
+                        [class.focused]="focused"
+                        [class.range]="isRange(date)"
+                        [class.faded]="isHovered(date) || isInside(date)"
+                        (mouseenter)="hoveredDate = date"
+                        (mouseleave)="hoveredDate = null"
+                      >
+                        {{ date.day }}
+                      </span>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <input
+                    #dpFromDate
+                    class="form-control"
+                    placeholder="yyyy-mm-dd"
+                    name="dpFromDate"
+                    [value]="formatter.format(fromDate)"
+                    (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                  />
+                  <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-12 my-2">
+                <div class="input-group">
+                  <input
+                    #dpToDate
+                    class="form-control"
+                    placeholder="yyyy-mm-dd"
+                    name="dpToDate"
+                    [value]="formatter.format(toDate)"
+                    (input)="toDate = validateInput(toDate, dpToDate.value)"
+                  />
+                  <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+            <button class="btn btn-primary" (click)="filter_date()"> Filtrer par dates</button>
+          </div>
+          <div class="card border-primary my-4">
+            <div class="card-body">
+              <h3 class="card-title text-center fw-bold">Dernières infos</h3>
+              <div class="row">
+                <div class="col-12 d-flex flex-column align-items-center justify-content-center">
+                  <app-character-item class="w-75" [title]="'Temperature'" [value]="module_simple.data.dataRequired.temp"
+                    [icon]="'thermometer-quarter'"></app-character-item>
+                  <app-character-item class="w-75" [title]="'Fuel'" [value]="module_simple.data.dataRequired.fuel"
+                    [icon]="'tint'"></app-character-item>
+                  <app-character-item class="w-75" [title]="'Batterie'" [value]="module_simple.data.dataRequired.oilPress"
+                   [icon]="'battery-quarter'"></app-character-item>
+                  <app-character-item class="w-75" [title]="'Phase 1'" [value]="module_simple.data.dataRequired.ph1"
+                   [icon]="'bolt'"></app-character-item>
+                  <app-character-item class="w-75" [title]="'Phase 2'" [value]="module_simple.data.dataRequired.ph2"
+                   [icon]="'bolt'"></app-character-item>
+                  <app-character-item class="w-75" [title]="'Phase 3'" [value]="module_simple.data.dataRequired.ph3"
+                   [icon]="'bolt'"></app-character-item>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-11 col-sm-10 col-md-10">
+          <div class="row">
+            <div class="col-xs-11 col-sm-10 col-md-4">
+              <canvas baseChart class="chart" [data]="fuel_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+              </canvas>
+            </div>
+            <div class="col-xs-11 col-sm-10 col-md-4">
+              <canvas baseChart class="chart" [data]="temperature_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+              </canvas>
+            </div>
+            <div class="col-xs-11 col-sm-10 col-md-4">
+              <canvas baseChart class="chart" [data]="battery_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+              </canvas>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-10" *ngIf="trames$ |async as trames">
+              <h1 class="text-center card-title text-center fw-bold"> Trames </h1>
+              <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
+                <ngb-panel *ngFor="let mod of trames.data" [id]="mod.id">
+                  <ng-template ngbPanelTitle>
+                    {{mod.date | date: 'dd MMMM yyyy à HH:mm'}} - {{mod.createdAt| date: 'dd MMMM yyyy à HH:mm'}}</ng-template>
+                  <ng-template ngbPanelContent>
+                    <div class="row d-flex justify-content-center align-items-center text-center px-4">
+                      <div class="col-sm-8 col-md-6 d-flex flex-column py-2 border border-primary">
+                        <h6>Fuel</h6>
+                        <span>
+                          <i class="fa fa-tint mx-2"></i>
+                          {{mod.fuel}}
+                        </span>
+                      </div>
+                      <div class="col-sm-8 col-md-6 d-flex flex-column py-2 border border-primary">
+                        <h6>Température</h6>
+                        <span>
+                          <i class="fa fa-thermometer-quarter mx-2"></i>
+                          {{mod.temp}}
+                        </span>
+                      </div>
+                      <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
+                        <h6>Phase 1</h6>
+                        <span>
+                          <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
+                          {{mod.ph1}}
+                        </span>
+                      </div>
+                      <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
+                        <h6>Phase 2</h6>
+                        <span>
+                          <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
+                          {{mod.ph2}}
+                        </span>
+                      </div>
+                      <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
+                        <h6>Phase 3</h6>
+                        <span>
+                          <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
+                          {{mod.ph3}}
+                        </span>
+                      </div>
+                      <!-- <table class="table table-hover table-bordered table-responsive mx-4">
+                          <thead class="thead-default table-dark">
+                            <tr class=" align-middle">
+                              <th>Heure</th>
+                              <th>Temperature</th>
+                              <th>Fuel</th>
+                              <th>frequence</th>
+                              <th>Pression d'huile</th>
+                              <th>Phase 1</th>
+                              <th>Phase 2</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr  *ngFor="let modul of mod." class=" align-middle">
+                              <td scope="row">{{modul.date | date: 'HH:mm:ss'}}</td>
+                              <td>{{modul.temperature}} °C</td>
+                              <td>{{modul.fuel}} L</td>
+                              <td>{{modul.frequence}} Mhz</td>
+                              <td>{{modul.pression_huile}} Bar</td>
+                              <td>{{modul.phase1}}</td>
+                              <td>{{modul.phase2}}</td>
+                            </tr>
+                          </tbody>
+                        </table> -->
+                    </div>
+                  </ng-template>
+                </ngb-panel>
+              </ngb-accordion>
+              <ngb-pagination *ngIf="trames.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
+                [(page)]="trames.pagination.page"
+                [pageSize]="trames.pagination.limit"
+                [collectionSize]="trames.pagination.totalCount">
+              </ngb-pagination>
+            </div>
+            <div class="col-md-6 col-sm-10" *ngIf="vidanges$ |async as vidanges">
+              <h1 class="text-center card-title text-center fw-bold">Vidanges</h1>
+              <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
+                <ngb-panel *ngFor="let vidange of vidanges.data" [id]="vidange.id">
+                  <ng-template ngbPanelTitle>
+                    {{vidange.date | date: 'dd MMMM yyyy à HH:mm'}} - {{vidange.createdAt| date: 'dd MMMM yyyy à HH:mm'}}</ng-template>
+                  <ng-template ngbPanelContent>
+                    <div class="row d-flex justify-content-center align-items-center text-center px-4">
+                      <div class="col-12 my-2">
+                        <div class="alert alert-info row d-flex p-2">
+                          <div class="col-2">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                          </div>
+                          <div class="col-9">
+                            {{vidange.remarque}}
+                          </div>
+                        </div>
+                      </div>
+                      <!-- <div class="col-12 mb-2">
+                        <small>
+                          <strong>
+                            A fonctionner pendant {{vidange.days}} JOURS à la vidange sa phase était de {{vidange.ph3}}
+                          </strong>
+                        </small>
+                      </div> -->
+                      <!-- <table class="table table-hover table-bordered table-responsive mx-4">
+                          <thead class="thead-default table-dark">
+                            <tr class=" align-middle">
+                              <th>Heure</th>
+                              <th>Temperature</th>
+                              <th>Fuel</th>
+                              <th>frequence</th>
+                              <th>Pression d'huile</th>
+                              <th>Phase 1</th>
+                              <th>Phase 2</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr  *ngFor="let modul of mod." class=" align-middle">
+                              <td scope="row">{{modul.date | date: 'HH:mm:ss'}}</td>
+                              <td>{{modul.temperature}} °C</td>
+                              <td>{{modul.fuel}} L</td>
+                              <td>{{modul.frequence}} Mhz</td>
+                              <td>{{modul.pression_huile}} Bar</td>
+                              <td>{{modul.phase1}}</td>
+                              <td>{{modul.phase2}}</td>
+                            </tr>
+                          </tbody>
+                        </table> -->
+                    </div>
+                  </ng-template>
+                </ngb-panel>
+              </ngb-accordion>
+              <ngb-pagination *ngIf="vidanges.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
+                [(page)]="vidanges.pagination.page"
+                [pageSize]="vidanges.pagination.limit"
+                [collectionSize]="vidanges.pagination.totalCount">
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <ng-template #no_module>
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-sm-10 col-md-6 col-lg-4">
+          <div class="row justify-content-center">
+            <img src="assets/error.png" alt="error image">
+          </div>
+        </div>
+        <h1 class="text-center mt-4 pt-4 text-danger">
+          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          {{err_message}}
+        </h1>
+        <p class="text-center">Module introuvable.</p>
         <a routerLink="/modules" class="mb-4 pb-4 text-center">
           <i class="fa fa-caret-left" aria-hidden="true"></i>
           Aller vers la liste de modules
         </a>
-        <div class="text-center mt-4">
-          <form class="row row-cols-sm-auto justify-content-center">
-            <div class="col-12 my-2">
-              <div class="dp-hidden position-absolute">
-                <div class="input-group">
-                  <input
-                    name="datepicker"
-                    class="form-control"
-                    ngbDatepicker
-                    #datepicker="ngbDatepicker"
-                    [autoClose]="'outside'"
-                    (dateSelect)="onDateSelection($event)"
-                    [displayMonths]="2"
-                    [dayTemplate]="t"
-                    outsideDays="hidden"
-                    [startDate]="fromDate!"
-                    tabindex="-1"
-                  />
-                  <ng-template #t let-date let-focused="focused">
-                    <span
-                      class="custom-day"
-                      [class.focused]="focused"
-                      [class.range]="isRange(date)"
-                      [class.faded]="isHovered(date) || isInside(date)"
-                      (mouseenter)="hoveredDate = date"
-                      (mouseleave)="hoveredDate = null"
-                    >
-                      {{ date.day }}
-                    </span>
-                  </ng-template>
-                </div>
-              </div>
-              <div class="input-group">
-                <input
-                  #dpFromDate
-                  class="form-control"
-                  placeholder="yyyy-mm-dd"
-                  name="dpFromDate"
-                  [value]="formatter.format(fromDate)"
-                  (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
-                />
-                <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button">
-                  <i class="fa fa-calendar" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-            <div class="col-12 my-2">
-              <div class="input-group">
-                <input
-                  #dpToDate
-                  class="form-control"
-                  placeholder="yyyy-mm-dd"
-                  name="dpToDate"
-                  [value]="formatter.format(toDate)"
-                  (input)="toDate = validateInput(toDate, dpToDate.value)"
-                />
-                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
-                  <i class="fa fa-calendar" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-          </form>
-          <button class="btn btn-primary" (click)="filter_date()"> Filtrer par dates</button>
-        </div>
-        <div class="card border-primary my-4">
-          <div class="card-body">
-            <h3 class="card-title text-center fw-bold">Dernières infos</h3>
-            <div class="row">
-              <div class="col-12 d-flex flex-column align-items-center justify-content-center">
-                <app-character-item class="w-75" [title]="'Temperature'" [value]="module_simple.data.dataRequired.temp"
-                  [icon]="'thermometer-quarter'"></app-character-item>
-                <app-character-item class="w-75" [title]="'Fuel'" [value]="module_simple.data.dataRequired.fuel"
-                  [icon]="'tint'"></app-character-item>
-                <app-character-item class="w-75" [title]="'Batterie'" [value]="module_simple.data.dataRequired.oilPress"
-                 [icon]="'battery-quarter'"></app-character-item>
-                <app-character-item class="w-75" [title]="'Phase 1'" [value]="module_simple.data.dataRequired.ph1"
-                 [icon]="'bolt'"></app-character-item>
-                <app-character-item class="w-75" [title]="'Phase 2'" [value]="module_simple.data.dataRequired.ph2"
-                 [icon]="'bolt'"></app-character-item>
-                <app-character-item class="w-75" [title]="'Phase 3'" [value]="module_simple.data.dataRequired.ph3"
-                 [icon]="'bolt'"></app-character-item>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-      <div class="col-xs-11 col-sm-10 col-md-8">
-        <div class="row">
-          <div class="col-xs-11 col-sm-10 col-md-6">
-            <canvas baseChart class="chart" [data]="fuel_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-            </canvas>
-          </div>
-          <div class="col-xs-11 col-sm-10 col-md-6">
-            <canvas baseChart class="chart" [data]="temperature_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-            </canvas>
-          </div>
-          <div class="col-xs-11 col-sm-10 col-md-6">
-            <canvas baseChart class="chart" [data]="battery_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-            </canvas>
-          </div>
-          <div class="col-xs-11 col-sm-10 col-md-6">
-            <canvas baseChart class="chart" [data]="phase_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-            </canvas>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6 col-sm-10" *ngIf="trames$ |async as trames">
-            <h1 class="text-center"> Trames </h1>
-            <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
-              <ngb-panel *ngFor="let mod of trames.data" [id]="mod.id">
-                <ng-template ngbPanelTitle>
-                  {{mod.date | date: 'dd MMMM yyyy à HH:mm'}} - {{mod.createdAt| date: 'dd MMMM yyyy à HH:mm'}}</ng-template>
-                <ng-template ngbPanelContent>
-                  <div class="row d-flex justify-content-center align-items-center text-center px-4">
-                    <div class="col-sm-8 col-md-6 d-flex flex-column py-2 border border-primary">
-                      <h6>Fuel</h6>
-                      <span>
-                        <i class="fa fa-tint mx-2"></i>
-                        {{mod.fuel}}
-                      </span>
-                    </div>
-                    <div class="col-sm-8 col-md-6 d-flex flex-column py-2 border border-primary">
-                      <h6>Température</h6>
-                      <span>
-                        <i class="fa fa-thermometer-quarter mx-2"></i>
-                        {{mod.temp}}
-                      </span>
-                    </div>
-                    <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
-                      <h6>Phase 1</h6>
-                      <span>
-                        <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
-                        {{mod.ph1}}
-                      </span>
-                    </div>
-                    <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
-                      <h6>Phase 2</h6>
-                      <span>
-                        <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
-                        {{mod.ph2}}
-                      </span>
-                    </div>
-                    <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
-                      <h6>Phase 3</h6>
-                      <span>
-                        <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
-                        {{mod.ph3}}
-                      </span>
-                    </div>
-                    <!-- <table class="table table-hover table-bordered table-responsive mx-4">
-                        <thead class="thead-default table-dark">
-                          <tr class=" align-middle">
-                            <th>Heure</th>
-                            <th>Temperature</th>
-                            <th>Fuel</th>
-                            <th>frequence</th>
-                            <th>Pression d'huile</th>
-                            <th>Phase 1</th>
-                            <th>Phase 2</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr  *ngFor="let modul of mod." class=" align-middle">
-                            <td scope="row">{{modul.date | date: 'HH:mm:ss'}}</td>
-                            <td>{{modul.temperature}} °C</td>
-                            <td>{{modul.fuel}} L</td>
-                            <td>{{modul.frequence}} Mhz</td>
-                            <td>{{modul.pression_huile}} Bar</td>
-                            <td>{{modul.phase1}}</td>
-                            <td>{{modul.phase2}}</td>
-                          </tr>
-                        </tbody>
-                      </table> -->
-                  </div>
-                </ng-template>
-              </ngb-panel>
-            </ngb-accordion>
-            <ngb-pagination *ngIf="trames.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
-              [(page)]="trames.pagination.page" [pageSize]="trames.pagination.limit"
-              [collectionSize]="trames.pagination.totalCount">
-            </ngb-pagination>
-          </div>
-          <div class="col-md-6 col-sm-10" *ngIf="vidanges$ |async as vidanges">
-            <h1 class="text-center">Vidanges</h1>
-            <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
-              <ngb-panel *ngFor="let vidange of vidanges.data" [id]="vidange.id">
-                <ng-template ngbPanelTitle>
-                  {{vidange.date | date: 'dd MMMM yyyy à HH:mm'}} - {{vidange.CreatedAt| date: 'dd MMMM yyyy à HH:mm'}}</ng-template>
-                <ng-template ngbPanelContent>
-                  <div class="row d-flex justify-content-center align-items-center text-center px-4">
-                    <div class="col-12 my-2">
-                      <div class="alert alert-info row d-flex p-2">
-                        <div class="col-2">
-                          <i class="fa fa-info-circle" aria-hidden="true"></i>
-                        </div>
-                        <div class="col-9">
-                          {{vidange.remarque}}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12 mb-2">
-                      <small>
-                        <strong>
-                          A fonctionner pendant {{vidange.days}} JOURS à la vidange sa phase était de {{vidange.ph3}}
-                        </strong>
-                      </small>
-                    </div>
-                    <!-- <table class="table table-hover table-bordered table-responsive mx-4">
-                        <thead class="thead-default table-dark">
-                          <tr class=" align-middle">
-                            <th>Heure</th>
-                            <th>Temperature</th>
-                            <th>Fuel</th>
-                            <th>frequence</th>
-                            <th>Pression d'huile</th>
-                            <th>Phase 1</th>
-                            <th>Phase 2</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr  *ngFor="let modul of mod." class=" align-middle">
-                            <td scope="row">{{modul.date | date: 'HH:mm:ss'}}</td>
-                            <td>{{modul.temperature}} °C</td>
-                            <td>{{modul.fuel}} L</td>
-                            <td>{{modul.frequence}} Mhz</td>
-                            <td>{{modul.pression_huile}} Bar</td>
-                            <td>{{modul.phase1}}</td>
-                            <td>{{modul.phase2}}</td>
-                          </tr>
-                        </tbody>
-                      </table> -->
-                  </div>
-                </ng-template>
-              </ngb-panel>
-            </ngb-accordion>
-            <ngb-pagination *ngIf="vidanges.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
-              [(page)]="vidanges.pagination.page" [pageSize]="vidanges.pagination.limit"
-              [collectionSize]="vidanges.pagination.totalCount">
-            </ngb-pagination>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-  </div>
-  <ng-template #no_module>
-    <div *ngIf="!loading" class="row d-flex justify-content-center align-items-center">
-      <div class="col-sm-10 col-md-6 col-lg-4">
-        <div class="row justify-content-center">
-          <img src="assets/error.png" alt="error image">
-        </div>
-      </div>
-      <h1 class="text-center mt-4 pt-4 text-danger">
-        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-        {{err_message}}
-      </h1>
-      <p class="text-center">Module introuvable.</p>
-      <a routerLink="/modules" class="mb-4 pb-4 text-center">
-        <i class="fa fa-caret-left" aria-hidden="true"></i>
-        Aller vers la liste de modules
-      </a>
-    </div>
-  </ng-template>
-</section>
+    </ng-template>
+  </section>
+</ng-container>
