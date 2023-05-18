@@ -54,7 +54,7 @@ export class ModuleComponent implements OnInit, OnDestroy {
     )
     this.socket.on("incomingTrame",(data: Data_socket)=>{
       console.log("trame event",{data})
-      this.modules$.pipe(
+      this.modules$=this.modules$.pipe(
         map((module: Modules_Paginate)=>{
           const mod=module.modules.find((module)=>module.id==data.trame.idModule)
           if(mod) {
@@ -62,14 +62,25 @@ export class ModuleComponent implements OnInit, OnDestroy {
             this.toast.info("Le module "+mod.stationName+" vient d'envoyer une trame")
             mod.lastInfoTrame={...data.module, date:data.trame.date, id: data.trame._id, idModule:data.trame.idModule}
           }
-          return mod
+          else if(module.pagination.page==1){
+            module.modules.unshift({
+              id: data.trame.idModule,
+              stationName: data.module.stationName,
+              position: { lat: '', long: '' },
+              status: data.module.status,
+              elapse: data.module.elapse,
+              elapse_total: data.module.elapse_total,
+              lastInfoTrame: { ...data.trame, id: data.trame._id }
+            })
+          }
+          return module
         })
-      ).subscribe()
+      )
     })
     this.socket.on("vidangeCreated", (data: Module)=>{
       alert("vidange créer")
       console.log({data})
-      this.modules$.pipe(
+      this.modules$=this.modules$.pipe(
         map((module: Modules_Paginate)=>{
           let mod=module.modules.find((module)=>module.stationName==data.stationName)
           if(mod) {
@@ -78,7 +89,7 @@ export class ModuleComponent implements OnInit, OnDestroy {
           }
           return module
         })
-      ).subscribe()
+      )
     })
   }
   ngOnDestroy(): void {

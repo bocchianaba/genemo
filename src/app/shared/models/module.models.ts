@@ -4,11 +4,11 @@ export interface Module {
   id: string
   stationName: string
   position: Position
-  dataRequired: DataRequired
+  dataRequired?: DataRequired
   status: string
   elapse: Elapse
   elapse_total: ElapseTotal
-  infoVidange: InfoVidange
+  infoVidange?: InfoVidange
   lastInfoTrame: InfoTrame
 }
 
@@ -35,9 +35,9 @@ export interface InfoTrame {
   ph3: number
   freq: number
   oilPress: number
-  date: any
+  date: Date
   bat: number
-  createdAt: string
+  createdAt: Date
   idModule: string
 }
 

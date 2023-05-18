@@ -135,7 +135,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.socket.on("incomingTrame",(data: Data_socket)=>{
       alert("nouvelle trame")
       console.log("trame event",{data})
-      this.trames$.pipe(
+      this.trames$=this.trames$.pipe(
         map((trames: Trames)=>{
           trames.data.unshift({...data.trame, id: data.trame._id})
           trames.data.slice(0,10)
@@ -144,18 +144,18 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           }
           return trames
         })
-      ).subscribe()
+      )
     })
     this.socket.on("vidangeCreated", (data: Module)=>{
       alert("vidange créer")
       console.log({data})
-      this.module_simple$.pipe(
+      this.module_simple$=this.module_simple$.pipe(
         map((module: Module_info)=>{
           this.toast.info("Le module "+data.stationName+" est en pleine vidange !")
           module.data={...data}
           return module
         })
-      ).subscribe()
+      )
     })
   }
   ngOnDestroy(): void {
