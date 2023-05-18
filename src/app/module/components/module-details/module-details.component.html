@@ -78,17 +78,19 @@
               <h3 class="card-title text-center fw-bold">Dernières infos</h3>
               <div class="row">
                 <div class="col-12 d-flex flex-column align-items-center justify-content-center">
-                  <app-character-item class="w-75" [title]="'Temperature'" [value]="module_simple.data.dataRequired.temp"
+                  <app-character-item class="w-75" [title]="'Temperature'" [mesure]="'°C'" [value]="module_simple.data.dataRequired?.temp??'N/A'"
                     [icon]="'thermometer-quarter'"></app-character-item>
-                  <app-character-item class="w-75" [title]="'Fuel'" [value]="module_simple.data.dataRequired.fuel"
+                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Fuel'" [value]="module_simple.data.dataRequired?.fuel??'N/A'"
                     [icon]="'tint'"></app-character-item>
-                  <app-character-item class="w-75" [title]="'Batterie'" [value]="module_simple.data.dataRequired.oilPress"
+                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Batterie'" [value]="module_simple.data.dataRequired?.bat??'N/A'"
                    [icon]="'battery-quarter'"></app-character-item>
-                  <app-character-item class="w-75" [title]="'Phase 1'" [value]="module_simple.data.dataRequired.ph1"
+                   <app-character-item class="w-75" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple.data.dataRequired?.oilPress??'N/A'"
+                    [icon]="'battery-quarter'"></app-character-item>
+                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 1'" [value]="module_simple.data.dataRequired?.ph1??'N/A'"
                    [icon]="'bolt'"></app-character-item>
-                  <app-character-item class="w-75" [title]="'Phase 2'" [value]="module_simple.data.dataRequired.ph2"
+                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 2'" [value]="module_simple.data.dataRequired?.ph2??'N/A'"
                    [icon]="'bolt'"></app-character-item>
-                  <app-character-item class="w-75" [title]="'Phase 3'" [value]="module_simple.data.dataRequired.ph3"
+                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 3'" [value]="module_simple.data.dataRequired?.ph3??'N/A'"
                    [icon]="'bolt'"></app-character-item>
                 </div>
               </div>
@@ -123,35 +125,35 @@
                         <h6>Fuel</h6>
                         <span>
                           <i class="fa fa-tint mx-2"></i>
-                          {{mod.fuel}}
+                          {{mod.fuel??0}} %
                         </span>
                       </div>
                       <div class="col-sm-8 col-md-6 d-flex flex-column py-2 border border-primary">
                         <h6>Température</h6>
                         <span>
                           <i class="fa fa-thermometer-quarter mx-2"></i>
-                          {{mod.temp}}
+                          {{mod.temp??0}} °C
                         </span>
                       </div>
                       <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
                         <h6>Phase 1</h6>
                         <span>
                           <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
-                          {{mod.ph1}}
+                          {{mod.ph1??0}} V
                         </span>
                       </div>
                       <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
                         <h6>Phase 2</h6>
                         <span>
                           <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
-                          {{mod.ph2}}
+                          {{mod.ph2??0}} V
                         </span>
                       </div>
                       <div class="col-sm-8 col-md-4 d-flex flex-column py-2 border border-primary">
                         <h6>Phase 3</h6>
                         <span>
                           <i class="fa fa-bolt mx-2" aria-hidden="true"></i>
-                          {{mod.ph3}}
+                          {{mod.ph3??0}} V
                         </span>
                       </div>
                       <!-- <table class="table table-hover table-bordered table-responsive mx-4">
