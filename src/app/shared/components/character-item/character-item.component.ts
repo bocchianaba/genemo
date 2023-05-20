@@ -8,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class CharacterItemComponent implements OnInit {
 
   @Input() title!: string
-  @Input() value!:string
+  @Input() value!:number
   @Input() mesure!:string
   @Input() icon!: string
 
