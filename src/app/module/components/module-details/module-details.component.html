@@ -78,19 +78,19 @@
               <h3 class="card-title text-center fw-bold">Dernières infos</h3>
               <div class="row">
                 <div class="col-12 d-flex flex-column align-items-center justify-content-center">
-                  <app-character-item class="w-75" [title]="'Temperature'" [mesure]="'°C'" [value]="module_simple.data.lastInfoTrame.temp||0"
+                  <app-character-item class="w-75" [title]="'Temperature'" [mesure]="'°C'" [value]="module_simple?.data?.lastInfoTrame?.temp||0"
                     [icon]="'thermometer-quarter'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Fuel'" [value]="module_simple.data.lastInfoTrame.fuel||0"
+                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Fuel'" [value]="module_simple?.data?.lastInfoTrame?.fuel||0"
                     [icon]="'tint'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Batterie'" [value]="module_simple.data.lastInfoTrame.bat||0"
+                  <app-character-item class="w-75" [mesure]="'VDC'" [title]="'Batterie'" [value]="module_simple?.data?.lastInfoTrame?.bat||0"
                    [icon]="'battery-quarter'"></app-character-item>
-                   <app-character-item class="w-75" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple.data.lastInfoTrame.oilPress||0"
+                   <app-character-item class="w-75" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple?.data?.lastInfoTrame?.oilPress||0"
                     [icon]="'battery-quarter'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 1'" [value]="module_simple.data.lastInfoTrame.ph1||0"
+                  <app-character-item class="w-75" [mesure]="'VAC'" [title]="'Phase 1'" [value]="module_simple?.data?.lastInfoTrame?.ph1||0"
                    [icon]="'bolt'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 2'" [value]="module_simple.data.lastInfoTrame.ph2||0"
+                  <app-character-item class="w-75" [mesure]="'VAC'" [title]="'Phase 2'" [value]="module_simple?.data?.lastInfoTrame?.ph2||0"
                    [icon]="'bolt'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 3'" [value]="module_simple.data.lastInfoTrame.ph3||0"
+                  <app-character-item class="w-75" [mesure]="'VAC'" [title]="'Phase 3'" [value]="module_simple?.data?.lastInfoTrame?.ph3||0"
                    [icon]="'bolt'"></app-character-item>
                 </div>
               </div>

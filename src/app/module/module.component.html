@@ -69,7 +69,7 @@
                   <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                     <path d="m 7 0 c -1 0 -1 1 -1 1 v 1 h -1 s -0.707031 -0.015625 -1.445312 0.355469 c -0.742188 0.371093 -1.554688 1.3125 -1.554688 2.644531 v 8 s -0.015625 0.707031 0.355469 1.449219 c 0.371093 0.738281 1.3125 1.550781 2.644531 1.550781 h 6 s 0.707031 0.015625 1.449219 -0.355469 c 0.738281 -0.371093 1.550781 -1.3125 1.550781 -2.644531 v -8 c 0 -1.332031 -0.8125 -2.273438 -1.550781 -2.644531 c -0.742188 -0.371094 -1.449219 -0.355469 -1.449219 -0.355469 h -1 v -1 c 0 -1 -1 -1 -1 -1 z m 1 4 h 3 c 0.554688 0 1 0.445312 1 1 v 8 c 0 0.554688 -0.445312 1 -1 1 h -6 c -0.554688 0 -1 -0.445312 -1 -1 v -8 c 0 -0.554688 0.445312 -1 1 -1 z m -3 3 v 6 h 6 v -6 z m 0 0" fill="#2e3434"/>
                 </svg>
-                  <span>{{module?.lastInfoTrame?.bat??'0'}} %</span>
+                  <span>{{module?.lastInfoTrame?.bat??'0'}} VDC</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
                   <svg width="24" height="24" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -103,21 +103,21 @@
                     <path d="M2 2V4H22V2H2ZM2 6V8H7V6H2ZM9 6V8H15V6H9ZM17 6V8H22V6H17Z" />
                     <path d="M14.6 10.9H17L13.2 22H10.6L6.9 10.9H9.3L12 20L14.6 10.9Z" />
                     </svg>
-                  <span>{{module.lastInfoTrame.ph1||0}} V</span>
+                  <span>{{module.lastInfoTrame.ph1||0}} VAC</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
                   <svg fill="#000000" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 2V4H22V2H2ZM2 6V8H7V6H2ZM9 6V8H15V6H9ZM17 6V8H22V6H17Z" />
                     <path d="M14.6 10.9H17L13.2 22H10.6L6.9 10.9H9.3L12 20L14.6 10.9Z" />
                     </svg>
-                  <span>{{module.lastInfoTrame.ph2||0}} V</span>
+                  <span>{{module.lastInfoTrame.ph2||0}} VAC</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
                   <svg fill="#000000" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 2V4H22V2H2ZM2 6V8H7V6H2ZM9 6V8H15V6H9ZM17 6V8H22V6H17Z" />
                     <path d="M14.6 10.9H17L13.2 22H10.6L6.9 10.9H9.3L12 20L14.6 10.9Z" />
                     </svg>
-                  <span>{{module.lastInfoTrame.ph3||0}} V</span>
+                  <span>{{module.lastInfoTrame.ph3||0}} VAC</span>
                 </div>
               </div>
               <div class="text-center">
@@ -238,9 +238,9 @@
                 </ng-container>
 
               </td>
-              <td>{{module.lastInfoTrame.ph1||0}} V</td>
-              <td>{{module.lastInfoTrame.ph2||0}} V</td>
-              <td>{{module.lastInfoTrame.ph3||0}} V</td>
+              <td>{{module.lastInfoTrame.ph1||0}} VAC</td>
+              <td>{{module.lastInfoTrame.ph2||0}} VAC</td>
+              <td>{{module.lastInfoTrame.ph3||0}} VAC</td>
               <td>{{module.infoVidange?.date | date:'dd MMMM yyyy à hh:MM:ss'}}</td>
               <td>{{module.infoVidange?.remarque}}</td>
               <td>
