@@ -24,6 +24,7 @@ export interface Trames{
 
 export interface Module_info{
   data: Module
+  lastInfoTrame: InfoTrame
 }
 
 export interface InfoTrame {
