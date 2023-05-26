@@ -1,6 +1,6 @@
 import { Module, Trame } from './../../../shared/models/module.models';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, shareReplay } from 'rxjs';
 import { DataRequired, InfoVidange, Module_info, Trames } from 'src/app/shared/models/module.models';
 import { ModuleService } from '../../services/module.service';
 import { ActivatedRoute } from '@angular/router';
@@ -82,15 +82,6 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       line: {
         tension: 0.5
       }
-    },
-    scales: {
-      x:{
-        ticks:{
-          callback: (value)=>{
-            return this.date_pipe.transform(value, "dd MMMM yyyy hh:mm:ss")
-          }
-        }
-      }
     }
   };
 
@@ -120,11 +111,11 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.trames$=this.module_service.get_module_trames(this.id)
     this.trames$.subscribe({
       next: (trames: Trames)=>{
-        this.fuel_lineChartData.labels=trames.data.map((trame: Trame)=> trame.date??trame.createdAt)
+        this.fuel_lineChartData.labels=trames.data.map((trame: Trame)=> this.date_pipe.transform(trame.date??trame.createdAt, "dd MMMM yyyy à HH:mm"))
         this.fuel_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.fuel)
-        this.temperature_lineChartData.labels=trames.data.map((trame: Trame)=> trame.date??trame.createdAt)
+        this.temperature_lineChartData.labels=trames.data.map((trame: Trame)=> this.date_pipe.transform(trame.date??trame.createdAt, "dd MMMM yyyy à HH:mm"))
         this.temperature_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.temp)
-        this.battery_lineChartData.labels=trames.data.map((trame: Trame)=> trame.date??trame.createdAt)
+        this.battery_lineChartData.labels=trames.data.map((trame: Trame)=> this.date_pipe.transform(trame.date??trame.createdAt, "dd MMMM yyyy à HH:mm"))
         this.battery_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.bat)
       }
     })
@@ -133,7 +124,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.vidanges$=this.module_service.get_module_vidanges(this.id)
 
     this.socket.on("incomingTrame",(data: Data_socket)=>{
-      alert("nouvelle trame")
+      // alert("nouvelle trame")
       console.log("trame event",{data})
       this.trames$=this.trames$.pipe(
         map((trames: Trames)=>{
@@ -143,18 +134,20 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
             this.toast.info("Le module vient d'envoyer une nouvelle trame")
           }
           return trames
-        })
+        }),
+        shareReplay(1)
       )
     })
     this.socket.on("vidangeCreated", (data: Module)=>{
-      alert("vidange créer")
+      // alert("vidange créer")
       console.log({data})
       this.module_simple$=this.module_simple$.pipe(
         map((module: Module_info)=>{
           this.toast.info("Le module "+data.stationName+" est en pleine vidange !")
           module.data={...data}
           return module
-        })
+        }),
+        shareReplay(1)
       )
     })
   }
