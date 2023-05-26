@@ -86,6 +86,8 @@
                    [icon]="'battery-quarter'"></app-character-item>
                    <app-character-item class="w-75" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple?.lastInfoTrame?.oilPress||0"
                     [icon]="'battery-quarter'"></app-character-item>
+                    <app-character-item class="w-75" [mesure]="'MHz'" [title]="'Fréquence'" [value]="module_simple?.lastInfoTrame?.freq||0"
+                      [icon]="'tint'"></app-character-item>
                   <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 1'" [value]="module_simple?.lastInfoTrame?.ph1||0"
                    [icon]="'bolt'"></app-character-item>
                   <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 2'" [value]="module_simple?.lastInfoTrame?.ph2||0"
