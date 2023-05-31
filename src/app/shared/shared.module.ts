@@ -6,6 +6,9 @@ import { NgbAccordionModule, NgbPaginationModule, NgbTooltipModule } from '@ng-b
 import { TruncateTextPipe } from './pipes/truncate-text.pipe';
 import { FormsModule } from '@angular/forms'
 import { CharacterItemComponent } from './components/character-item/character-item.component';
+import { SleepComponent } from './components/svg/sleep/sleep.component';
+import { TableComponent } from './components/svg/table/table.component';
+import { RunningComponent } from './components/svg/running/running.component';
 
 
 
@@ -13,7 +16,10 @@ import { CharacterItemComponent } from './components/character-item/character-it
   declarations: [
     CharacterItemComponent,
     BannerComponent,
-    TruncateTextPipe
+    TruncateTextPipe,
+    SleepComponent,
+    TableComponent,
+    RunningComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +32,10 @@ import { CharacterItemComponent } from './components/character-item/character-it
     NgbTooltipModule,
     NgbAccordionModule,
     FormsModule,
-    CharacterItemComponent
+    CharacterItemComponent,
+    TableComponent,
+    SleepComponent,
+    RunningComponent
   ]
 })
 export class SharedModule { }

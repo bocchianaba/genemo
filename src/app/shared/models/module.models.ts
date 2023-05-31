@@ -28,18 +28,18 @@ export interface Module_info{
 }
 
 export interface InfoTrame {
-  id: string
-  temp: number
-  fuel: number
-  ph1: number
-  ph2: number
-  ph3: number
-  freq: number
-  oilPress: number
-  date: Date
-  bat: number
-  createdAt: Date
-  idModule: string
+  id?: string
+  temp?: number
+  fuel?: number
+  ph1?: number
+  ph2?: number
+  ph3?: number
+  freq?: number
+  oilPress?: number
+  date?: Date
+  bat?: number
+  createdAt?: Date
+  idModule?: string
 }
 
 

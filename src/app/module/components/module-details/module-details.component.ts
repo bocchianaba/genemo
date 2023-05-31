@@ -1,6 +1,6 @@
 import { Module, Trame } from './../../../shared/models/module.models';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, map, shareReplay } from 'rxjs';
+import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { BehaviorSubject, Observable, map, shareReplay, tap } from 'rxjs';
 import { DataRequired, InfoVidange, Module_info, Trames } from 'src/app/shared/models/module.models';
 import { ModuleService } from '../../services/module.service';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { Socket } from 'ngx-socket-io';
 import { DatePipe } from '@angular/common';
 import { AutoUnsubscribe } from 'src/app/shared/decorators/auto-unsubscribe.decorator';
 import { Data_socket } from 'src/app/shared/models/module-socket.models';
+import { BaseChartDirective } from 'ng2-charts';
 
 @AutoUnsubscribe
 @Component({
@@ -77,6 +78,76 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     ],
     labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
   };
+  public oil_press_lineChartData: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [ 28, 48, 40, 19, 86, 27, 90 ],
+        label: 'Pression d\'huile',
+        backgroundColor: 'rgba(77,83,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      }
+    ],
+    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+  };
+  public freq_lineChartData: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [ 28, 48, 40, 19, 86, 27, 90 ],
+        label: 'Fréquence',
+        backgroundColor: 'rgba(77,83,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      }
+    ],
+    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+  };
+  public phase_lineChartData: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [ 28, 48, 40, 19, 86, 27, 90 ],
+        label: 'Phase 1',
+        backgroundColor: 'rgba(77,83,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      },
+      {
+        data: [ 42, 204, 56, 49, 86, 27, 102 ],
+        label: 'Phase 2',
+        backgroundColor: 'rgba(47,57,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      },
+      {
+        data: [ 28, 48, 40, 19, 86, 27, 90 ],
+        label: 'Phase 3',
+        backgroundColor: 'rgba(41,83,96,0.6)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      },
+    ],
+    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+  };
   public lineChartOptions: ChartConfiguration['options'] = {
     elements: {
       line: {
@@ -88,9 +159,12 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   public lineChartType: ChartType = 'line';
   module_simple$!: Observable<Module_info>;
   module_simple!: Module_info
-  trames$!: Observable<Trames>;
+  trames$!: Observable<Trames|null>;
   vidanges$!: Observable<Data<InfoVidange>>;
+  private trame_subject= new BehaviorSubject<Trames|null>(null)
   // fuel_data!: ChartConfiguration['data']=new ChartConfiguration['data']();
+  @ViewChildren(BaseChartDirective) chart?: QueryList<BaseChartDirective>;
+
 
   constructor(
     private module_service: ModuleService,
@@ -105,18 +179,46 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.id=this.route.snapshot.paramMap.get('id')
 		this.fromDate = calendar.getToday();
 		this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
+    this.trames$= this.trame_subject.asObservable()
+  }
+
+  date_pipe_transform(data_date: any){
+    return this.date_pipe.transform(data_date, "dd MMMM yyyy à HH:mm")
   }
 
   ngOnInit(): void {
-    this.trames$=this.module_service.get_module_trames(this.id)
+    this.module_service.get_module_trames(this.id).subscribe(
+      (trames: Trames)=>this.trame_subject.next(trames)
+    )
     this.trames$.subscribe({
-      next: (trames: Trames)=>{
-        this.fuel_lineChartData.labels=trames.data.map((trame: Trame)=> this.date_pipe.transform(trame.date??trame.createdAt, "dd MMMM yyyy à HH:mm"))
-        this.fuel_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.fuel)
-        this.temperature_lineChartData.labels=trames.data.map((trame: Trame)=> this.date_pipe.transform(trame.date??trame.createdAt, "dd MMMM yyyy à HH:mm"))
-        this.temperature_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.temp)
-        this.battery_lineChartData.labels=trames.data.map((trame: Trame)=> this.date_pipe.transform(trame.date??trame.createdAt, "dd MMMM yyyy à HH:mm"))
-        this.battery_lineChartData.datasets[0].data=trames.data.map((trame: Trame)=> trame.bat)
+      next: (trames: Trames|null)=>{
+        this.fuel_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.fuel_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
+        this.temperature_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.temperature_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
+        this.battery_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.battery_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
+        this.oil_press_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.oil_press_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
+        this.freq_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.freq_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.phase_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.datasets[1].data=trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.datasets[2].data=trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
+        console.log({fuel: this.fuel_lineChartData.datasets[0].data})
+        console.log({temperature: this.temperature_lineChartData.datasets[0].data})
+        console.log({battery: this.battery_lineChartData.datasets[0].data})
+        console.log({oil_press: this.oil_press_lineChartData.datasets[0].data})
+        console.log({freq: this.freq_lineChartData.datasets[0].data})
+        console.log({phase1: this.phase_lineChartData.datasets[0].data})
+        console.log({phase2: this.phase_lineChartData.datasets[1].data})
+        console.log({phase3: this.phase_lineChartData.datasets[2].data})
+        // Accédez aux instances du composant avec les identifiants spécifiques après que la vue a été initialisée
+        this.chart?.forEach((c:BaseChartDirective) => {
+          // Utilisez l'instance du composant cible ici
+          c?.update();
+        });
       }
     })
     this.module_simple$=this.module_service.get_simple_module(this.id)
@@ -124,18 +226,55 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.vidanges$=this.module_service.get_module_vidanges(this.id)
 
     this.socket.on("incomingTrame",(data: Data_socket)=>{
-      // alert("nouvelle trame")
       console.log("trame event",{data})
-      this.trames$=this.trames$.pipe(
-        map((trames: Trames)=>{
-          trames.data.unshift({...data.trame, id: data.trame._id})
-          trames.data.slice(0,10)
+      this.module_simple$=this.module_simple$.pipe(
+        map((module_simple:Module_info)=>{
+          let module=Object.assign({}, module_simple)
+          module.lastInfoTrame={...data.trame, id:data.trame._id}
+          module.data.status=data.trame.status
+          return module
+        })
+      )
+      this.trames$.subscribe(
+        (trames: Trames|null)=>{
+          let data_trames=Object.assign({}, trames)
+          data_trames?.data.unshift({...data.trame, id: data.trame._id})
+          data_trames.data=data_trames?.data.slice(0,10)
+          console.log({data_trames})
+          console.log({trames})
+          // this.trame_subject.next(data_trames)
+        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
+        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
+        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
+        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
+        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
+        console.log({fuel: this.fuel_lineChartData.datasets[0].data})
+        console.log({temperature: this.temperature_lineChartData.datasets[0].data})
+        console.log({battery: this.battery_lineChartData.datasets[0].data})
+        console.log({oil_press: this.oil_press_lineChartData.datasets[0].data})
+        console.log({freq: this.freq_lineChartData.datasets[0].data})
+        console.log({phase1: this.phase_lineChartData.datasets[0].data})
+        console.log({phase2: this.phase_lineChartData.datasets[1].data})
+        console.log({phase3: this.phase_lineChartData.datasets[2].data})
           if(data.trame.idModule==this.module_simple.data.id) {
             this.toast.info("Le module vient d'envoyer une nouvelle trame")
+            // Accédez aux instances du composant avec les identifiants spécifiques après que la vue a été initialisée
+            this.chart?.forEach((c:BaseChartDirective) => {
+              // Utilisez l'instance du composant cible ici
+              c?.update();
+            });
           }
-          return trames
-        }),
-        shareReplay(1)
+          return data_trames
+        }
       )
     })
     this.socket.on("vidangeCreated", (data: Module)=>{
@@ -155,7 +294,24 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
   }
 
+  update_module_simple(event: any){
+    const id= event.target.value
+    this.module_simple$=this.trames$.pipe(
+      map(
+        (trames: Trames | null)=> {
+          const trame=trames?.data.find(t=> t.id==id)
+          console.log({trame, id})
+          return {
+            data: {...this.module_simple.data},
+            lastInfoTrame: {...trame}
+          }
+        }
+      )
+    )
+  }
+
   page_change(page: number){
+    this.loading=true
     console.log(page)
     this.trames$=this.module_service.get_module_trames(this.id, page)
     this.trames$.subscribe(
@@ -180,6 +336,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           this.err_message=err.error.message
         },
         complete:()=>{
+          this.loading=false
         }
       }
     )

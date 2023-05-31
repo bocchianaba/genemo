@@ -13,12 +13,32 @@ import { Data_socket } from '../shared/models/module-socket.models';
 @Component({
   selector: 'app-module',
   templateUrl: './module.component.html',
-  styleUrls: ['./module.component.scss']
+  styleUrls: ['./module.component.scss'],
+  styles:[
+    `
+    .my-custom-class .tooltip-inner {
+				background-color: darkgreen;
+				font-size: 125%;
+			}
+			.my-custom-class.bs-tooltip-end .tooltip-arrow::before {
+				border-right-color: darkgreen;
+			}
+			.my-custom-class.bs-tooltip-start .tooltip-arrow::before {
+				border-left-color: darkgreen;
+			}
+			.my-custom-class.bs-tooltip-top .tooltip-arrow::before {
+				border-top-color: darkgreen;
+			}
+			.my-custom-class.bs-tooltip-bottom .tooltip-arrow::before {
+				border-bottom-color: darkgreen;
+			}
+    `
+  ]
 })
 export class ModuleComponent implements OnInit, OnDestroy {
 
   title = 'generator-manager';
-  display: string='card'
+  display: string='list'
   modules$!: Observable<Modules_Paginate>
   subscription: any;
   loading: boolean=true;
