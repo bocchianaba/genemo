@@ -11,7 +11,8 @@
           </a>
           <div class="text-center mt-4">
             <div class="row d-flex" *ngIf="trames$ |async as trames">
-              <select class="form-select" (change)="update_module_simple($event)" aria-label="Default select example">
+              <label for="select_form">Sélectionner une trame</label>
+              <select id="select_form" name="select_form" class="form-select" (change)="update_module_simple($event)" aria-label="Default select example">
                 <option [value]="mod.id" *ngFor="let mod of trames.data" [id]="mod.id">{{mod.date | date: 'dd MMMM yyyy à HH:mm'}}</option>
               </select>
               <ngb-pagination *ngIf="trames.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
@@ -49,69 +50,77 @@
           </div>
         </div>
         <div class="col-xs-11 col-sm-10 col-md-9">
-          <div class="row">
-            <form class="row row-cols-sm-auto justify-content-center">
-              <div class="col-sm-12 col-md-6 my-2">
-                <div class="dp-hidden position-absolute">
-                  <div class="input-group">
-                    <input
-                      name="datepicker"
-                      class="form-control"
-                      ngbDatepicker
-                      #datepicker="ngbDatepicker"
-                      [autoClose]="'outside'"
-                      (dateSelect)="onDateSelection($event)"
-                      [displayMonths]="2"
-                      [dayTemplate]="t"
-                      outsideDays="hidden"
-                      [startDate]="fromDate!"
-                      tabindex="-1"
-                    />
-                    <ng-template #t let-date let-focused="focused">
-                      <span
-                        class="custom-day"
-                        [class.focused]="focused"
-                        [class.range]="isRange(date)"
-                        [class.faded]="isHovered(date) || isInside(date)"
-                        (mouseenter)="hoveredDate = date"
-                        (mouseleave)="hoveredDate = null"
-                      >
-                        {{ date.day }}
-                      </span>
-                    </ng-template>
+          <div class="row justify-content-center d-flex">
+            <div class="col-12">
+              <div class="row justify-content-center">
+                <form class="col-sm-10 col-md-6 justify-content-center mb-4">
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6 my-2">
+                      <div class="dp-hidden position-absolute">
+                        <div class="input-group">
+                          <input
+                            name="datepicker"
+                            class="form-control"
+                            ngbDatepicker
+                            #datepicker="ngbDatepicker"
+                            [autoClose]="'outside'"
+                            (dateSelect)="onDateSelection($event)"
+                            [displayMonths]="2"
+                            [dayTemplate]="t"
+                            outsideDays="hidden"
+                            [startDate]="fromDate!"
+                            tabindex="-1"
+                          />
+                          <ng-template #t let-date let-focused="focused">
+                            <span
+                              class="custom-day"
+                              [class.focused]="focused"
+                              [class.range]="isRange(date)"
+                              [class.faded]="isHovered(date) || isInside(date)"
+                              (mouseenter)="hoveredDate = date"
+                              (mouseleave)="hoveredDate = null"
+                            >
+                              {{ date.day }}
+                            </span>
+                          </ng-template>
+                        </div>
+                      </div>
+                      <div class="input-group">
+                        <input
+                          #dpFromDate
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dpFromDate"
+                          [value]="formatter.format(fromDate)"
+                          (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                        />
+                        <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button">
+                          <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 my-2">
+                      <div class="input-group">
+                        <input
+                          #dpToDate
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dpToDate"
+                          [value]="formatter.format(toDate)"
+                          (input)="toDate = validateInput(toDate, dpToDate.value)"
+                        />
+                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
+                          <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-12 text-center">
+                      <button class="btn btn-primary" (click)="filter_date()"> Filtrer les trames par dates</button>
+                    </div>
                   </div>
-                </div>
-                <div class="input-group">
-                  <input
-                    #dpFromDate
-                    class="form-control"
-                    placeholder="yyyy-mm-dd"
-                    name="dpFromDate"
-                    [value]="formatter.format(fromDate)"
-                    (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
-                  />
-                  <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                  </button>
-                </div>
+                </form>
               </div>
-              <div class="col-sm-12 col-md-6 my-2">
-                <div class="input-group">
-                  <input
-                    #dpToDate
-                    class="form-control"
-                    placeholder="yyyy-mm-dd"
-                    name="dpToDate"
-                    [value]="formatter.format(toDate)"
-                    (input)="toDate = validateInput(toDate, dpToDate.value)"
-                  />
-                  <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                  </button>
-                </div>
               </div>
-              <button class="btn btn-primary" (click)="filter_date()"> Filtrer par dates</button>
-          </form>
             <div class="col-xs-12 col-sm-12 col-md-6">
               <canvas baseChart class="chart" [data]="fuel_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>

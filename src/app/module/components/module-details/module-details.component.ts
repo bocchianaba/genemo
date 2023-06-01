@@ -35,7 +35,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         data: [ 165, 200, 150, 251, 45, 687, 142 ],
         label: 'Fuel',
         backgroundColor: 'rgba(148,159,177,0.2)',
-        borderColor: 'rgba(148,159,177,1)',
+        borderColor: 'rgba(148,159,177,0.6)',
         pointBackgroundColor: 'rgba(148,159,177,1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
@@ -68,7 +68,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         data: [ 28, 48, 40, 19, 86, 27, 90 ],
         label: 'Battérie',
         backgroundColor: 'rgba(77,83,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
+        borderColor: 'rgba(77,83,96,0.6)',
         pointBackgroundColor: 'rgba(77,83,96,1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
@@ -83,9 +83,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       {
         data: [ 28, 48, 40, 19, 86, 27, 90 ],
         label: 'Pression d\'huile',
-        backgroundColor: 'rgba(77,83,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
+        backgroundColor: 'rgba(22,247,69,0.2)',
+        borderColor: 'rgba(22,247,69,0.6)',
+        pointBackgroundColor: 'rgba(22,247,69,1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(77,83,96,1)',
@@ -99,9 +99,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       {
         data: [ 28, 48, 40, 19, 86, 27, 90 ],
         label: 'Fréquence',
-        backgroundColor: 'rgba(77,83,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
+        backgroundColor: 'rgba(250,195,39,0.2)',
+        borderColor: 'rgba(250,195,39,0.6)',
+        pointBackgroundColor: 'rgba(250,195,39,1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(77,83,96,1)',
@@ -115,9 +115,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       {
         data: [ 28, 48, 40, 19, 86, 27, 90 ],
         label: 'Phase 1',
-        backgroundColor: 'rgba(77,83,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
+        backgroundColor: 'rgba(23,83,250,0.2)',
+        borderColor: 'rgba(23,83,250,0.6)',
+        pointBackgroundColor: 'rgba(23,83,250,0.2)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(77,83,96,1)',
@@ -126,9 +126,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       {
         data: [ 42, 204, 56, 49, 86, 27, 102 ],
         label: 'Phase 2',
-        backgroundColor: 'rgba(47,57,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
+        backgroundColor: 'rgba(57,57,57,0.2)',
+        borderColor: 'rgba(57,57,57,0.6)',
+        pointBackgroundColor: 'rgba(57,57,57,1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(77,83,96,1)',
@@ -137,9 +137,9 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       {
         data: [ 28, 48, 40, 19, 86, 27, 90 ],
         label: 'Phase 3',
-        backgroundColor: 'rgba(41,83,96,0.6)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
+        backgroundColor: 'rgba(125,125,125,0.2)',
+        borderColor: 'rgba(125,125,125,0.6)',
+        pointBackgroundColor: 'rgba(125,125,125,1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(77,83,96,1)',
@@ -314,6 +314,17 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.loading=true
     console.log(page)
     this.trames$=this.module_service.get_module_trames(this.id, page)
+    this.module_simple$=this.trames$.pipe(
+      map(
+        (trames: Trames | null)=> {
+          const trame=trames?.data[0]
+          return {
+            data: {...this.module_simple.data},
+            lastInfoTrame: {...trame}
+          }
+        }
+      )
+    )
     this.trames$.subscribe(
       {
         next:(trame)=>{
@@ -383,7 +394,34 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 	}
   filter_date(){
     console.log({from: this.fromDate,to:this.toDate})
-    this.trames$=this.module_service.get_module_trames(this.id,1,10,new Date(this.fromDate?.year??0,this.fromDate?.month??1-1,this.fromDate?.day),new Date(this.toDate?.year??0,this.toDate?.month??1-1,this.toDate?.day))
-    this.vidanges$=this.module_service.get_module_vidanges(this.id,1,10,new Date(this.fromDate?.year??0,this.fromDate?.month??1-1,this.fromDate?.day),new Date(this.toDate?.year??0,this.toDate?.month??1-1,this.toDate?.day))
+    this.trames$=this.module_service.get_module_trames(this.id,1,10,new Date(this.fromDate?.year??0,(this.fromDate?.month??1)-1,this.fromDate?.day),new Date(this.toDate?.year??0,(this.toDate?.month??1)-1,this.toDate?.day))
+    this.vidanges$=this.module_service.get_module_vidanges(this.id,1,10,new Date(this.fromDate?.year??0,(this.fromDate?.month??1)-1,this.fromDate?.day),new Date(this.toDate?.year??0,(this.toDate?.month??1)-1,this.toDate?.day))
+    this.trames$.subscribe(
+      (trames: Trames|null)=>{
+        let data_trames=Object.assign({}, trames)
+      this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+      this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
+      this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+      this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
+      this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+      this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
+      this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+      this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
+      this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+      this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
+      this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+      this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
+      this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
+      this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
+      console.log({fuel: this.fuel_lineChartData.datasets[0].data})
+      console.log({temperature: this.temperature_lineChartData.datasets[0].data})
+      console.log({battery: this.battery_lineChartData.datasets[0].data})
+      console.log({oil_press: this.oil_press_lineChartData.datasets[0].data})
+      console.log({freq: this.freq_lineChartData.datasets[0].data})
+      console.log({phase1: this.phase_lineChartData.datasets[0].data})
+      console.log({phase2: this.phase_lineChartData.datasets[1].data})
+      console.log({phase3: this.phase_lineChartData.datasets[2].data})
+      }
+    )
   }
 }
