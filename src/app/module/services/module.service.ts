@@ -9,7 +9,7 @@ import { Data } from 'src/app/shared/models/pagination.model';
   providedIn: 'root'
 })
 export class ModuleService {
-  get_module_trames(id: string | null,page=1, limit=10, from?: Date, at?: Date): Observable<Trames>{
+  get_module_trames(id: string | null,page=1, limit=10, from?: Date|string, at?: Date|string): Observable<Trames>{
     if(from && at)
       return this.http.get<Trames>(`${environment.backend_url}/modules/${id}/trames?page=${page}&limit=${limit}&from=${from}&at=${at}`)
     else if(from)
@@ -19,7 +19,7 @@ export class ModuleService {
     else
       return this.http.get<Trames>(`${environment.backend_url}/modules/${id}/trames?page=${page}&limit=${limit}`)
   }
-  get_module_vidanges(id: string | null,page=1, limit=10, from?: Date, at?: Date): Observable<Data<InfoVidange>>{
+  get_module_vidanges(id: string | null,page=1, limit=10, from?: Date|string, at?: Date|string): Observable<Data<InfoVidange>>{
     if(from && at)
       return this.http.get<Data<InfoVidange>>(`${environment.backend_url}/modules/${id}/vidanges?page=${page}&limit=${limit}&from=${from}&at=${at}`)
     else if(from)

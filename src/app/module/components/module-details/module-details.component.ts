@@ -394,8 +394,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 	}
   filter_date(){
     console.log({from: this.fromDate,to:this.toDate})
-    this.trames$=this.module_service.get_module_trames(this.id,1,10,new Date(this.fromDate?.year??0,(this.fromDate?.month??1)-1,this.fromDate?.day),new Date(this.toDate?.year??0,(this.toDate?.month??1)-1,this.toDate?.day))
-    this.vidanges$=this.module_service.get_module_vidanges(this.id,1,10,new Date(this.fromDate?.year??0,(this.fromDate?.month??1)-1,this.fromDate?.day),new Date(this.toDate?.year??0,(this.toDate?.month??1)-1,this.toDate?.day))
+    this.trames$=this.module_service.get_module_trames(this.id,1,10,`${(this.fromDate?.month??1)}-${this.fromDate?.day}-${this.fromDate?.year??0}`,`${(this.toDate?.month??1)}-${this.toDate?.day}-${this.toDate?.year??0}`)
+    this.vidanges$=this.module_service.get_module_vidanges(this.id,1,10,`${(this.fromDate?.month??1)}-${this.fromDate?.day}-${this.fromDate?.year??0}`,`${(this.toDate?.month??1)}-${this.toDate?.day}-${this.toDate?.year??0}`)
     this.trames$.subscribe(
       (trames: Trames|null)=>{
         let data_trames=Object.assign({}, trames)

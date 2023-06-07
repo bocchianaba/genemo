@@ -28,21 +28,21 @@
               <small> <i class="fa fa-clock-o mx" aria-hidden="true"></i> Reçu le <strong>{{module_simple?.lastInfoTrame?.date | date: "dd MMMM yyyy à HH:mm"}}</strong></small>
               <div class="row">
                 <div class="col-12 d-flex flex-column align-items-center justify-content-center">
-                  <app-character-item class="w-75" [title]="'Temperature'" [mesure]="'°C'" [value]="module_simple?.lastInfoTrame?.temp||0"
+                  <app-character-item class="w-75" [title]="'Temperature'" [mesure]="'°C'" [value]="module_simple?.lastInfoTrame?.temp||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.temp??0)>95}"
                     [icon]="'thermometer-quarter'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Fuel Level'" [value]="module_simple?.lastInfoTrame?.fuel||0"
+                  <app-character-item class="w-75" [mesure]="'%'" [title]="'Fuel Level'" [value]="module_simple?.lastInfoTrame?.fuel||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.fuel??0)<10}"
                     [icon]="'tint'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'VDC'" [title]="'Batterie'" [value]="module_simple?.lastInfoTrame?.bat||0"
-                   [icon]="'battery-quarter'"></app-character-item>
-                   <app-character-item class="w-75" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple?.lastInfoTrame?.oilPress||0"
+                  <app-character-item class="w-75" [mesure]="'VDC'" [title]="'Batterie'" [value]="module_simple?.lastInfoTrame?.bat||0" [ngClass]="{'text-danger': (module_simple?.lastInfoTrame?.bat??0)<10}"
+                   [icon]="'battery-empty'"></app-character-item>
+                   <app-character-item class="w-75" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple?.lastInfoTrame?.oilPress||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.oilPress??0)<10}"
                     [icon]="'battery-quarter'"></app-character-item>
-                    <app-character-item class="w-75" [mesure]="'MHz'" [title]="'Fréquence'" [value]="module_simple?.lastInfoTrame?.freq||0"
+                    <app-character-item class="w-75" [mesure]="'Hz'" [title]="'Fréquence'" [value]="module_simple?.lastInfoTrame?.freq||0" [ngClass]="{'text-danger': (module_simple?.lastInfoTrame?.freq??0)<45 || (module_simple?.lastInfoTrame?.freq??0)>55}"
                       [icon]="'tint'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 1'" [value]="module_simple?.lastInfoTrame?.ph1||0"
+                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 1'" [value]="module_simple?.lastInfoTrame?.ph1||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.ph1??0)<180 || (module_simple.lastInfoTrame.ph1??0)>240}"
                    [icon]="'bolt'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 2'" [value]="module_simple?.lastInfoTrame?.ph2||0"
+                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 2'" [value]="module_simple?.lastInfoTrame?.ph2||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.ph2??0)<180 || (module_simple.lastInfoTrame.ph2??0)>240}"
                    [icon]="'bolt'"></app-character-item>
-                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 3'" [value]="module_simple?.lastInfoTrame?.ph3||0"
+                  <app-character-item class="w-75" [mesure]="'V'" [title]="'Phase 3'" [value]="module_simple?.lastInfoTrame?.ph3||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.ph3??0)<180 || (module_simple.lastInfoTrame.ph3??0)>240}"
                    [icon]="'bolt'"></app-character-item>
                 </div>
               </div>
@@ -121,27 +121,27 @@
                 </form>
               </div>
               </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6 my-4">
               <canvas baseChart class="chart" [data]="fuel_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6 my-4">
               <canvas baseChart class="chart" [data]="temperature_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6 my-4">
               <canvas baseChart class="chart" [data]="battery_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6 my-4">
               <canvas baseChart class="chart" [data]="oil_press_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6 my-4">
               <canvas baseChart class="chart" [data]="freq_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6 my-4">
               <canvas baseChart class="chart" [data]="phase_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
               </canvas>
             </div>

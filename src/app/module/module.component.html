@@ -126,7 +126,7 @@
                 <div class="col-sm-8 col-md-6 little_text">
                   <svg *ngIf="(module?.lastInfoTrame?.freq??0)>=45 && (module?.lastInfoTrame?.freq??0)<=55; else svg_red_freq"  width="24" height="24" viewBox="0 0 24 24" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line"><polyline id="primary" points="21 12 17 12 15 16 11 8 8 15 6 12 3 12" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></polyline></svg>
                   <ng-template #svg_red_freq><svg viewBox="0 0 24 24" height="24" width="24" id="frequency-2" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line" fill="#ff0000" stroke="#ff0000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><polyline id="primary" points="21 12 17 12 15 16 11 8 8 15 6 12 3 12" style="fill: none; stroke: #de3545; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></polyline></g></svg></ng-template>
-                  <span [ngClass]="{'text-danger': (module?.lastInfoTrame?.freq??0)<45 || (module?.lastInfoTrame?.freq??0)>55}">{{module.lastInfoTrame.freq||0}} MHz</span>
+                  <span [ngClass]="{'text-danger': (module?.lastInfoTrame?.freq??0)<45 || (module?.lastInfoTrame?.freq??0)>55}">{{module.lastInfoTrame.freq||0}} Hz</span>
                 </div>
                 <div class="col-sm-8 col-md-6 little_text">
                   <span [ngClass]="{'text-danger': (module.lastInfoTrame.ph1??0)<180 || (module.lastInfoTrame.ph1??0)>240}" class="fw-bold">PH1: </span>
