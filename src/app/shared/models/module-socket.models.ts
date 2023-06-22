@@ -18,6 +18,8 @@ export interface Module_socket {
   elapse_total: ElapseTotal
   stationName: string
   elapse_total_number: number
+  elapse_hours_minutes: Elapse
+  elapse_total_hours_minutes: ElapseTotal
   elapse: Elapse
   status: string
   _id: string

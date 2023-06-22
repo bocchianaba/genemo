@@ -63,7 +63,7 @@ const ngx_ui_loader_configuration:NgxUiLoaderConfig =
     NgbModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'fr-FR' }
+    { provide: LOCALE_ID, useValue: 'fr-CM' }
   ],
   bootstrap: [AppComponent]
 })

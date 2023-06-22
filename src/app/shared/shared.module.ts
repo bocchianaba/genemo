@@ -9,6 +9,7 @@ import { CharacterItemComponent } from './components/character-item/character-it
 import { SleepComponent } from './components/svg/sleep/sleep.component';
 import { TableComponent } from './components/svg/table/table.component';
 import { RunningComponent } from './components/svg/running/running.component';
+import { CamerounDatePipe } from './pipes/cameroun-date.pipe';
 
 
 
@@ -19,7 +20,8 @@ import { RunningComponent } from './components/svg/running/running.component';
     TruncateTextPipe,
     SleepComponent,
     TableComponent,
-    RunningComponent
+    RunningComponent,
+    CamerounDatePipe
   ],
   imports: [
     CommonModule,
@@ -35,7 +37,8 @@ import { RunningComponent } from './components/svg/running/running.component';
     CharacterItemComponent,
     TableComponent,
     SleepComponent,
-    RunningComponent
+    RunningComponent,
+    CamerounDatePipe
   ]
 })
 export class SharedModule { }

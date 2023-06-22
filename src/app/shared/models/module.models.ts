@@ -8,6 +8,8 @@ export interface Module {
   status: string
   elapse: Elapse
   elapse_total: ElapseTotal
+  elapse_hours_minutes?: Elapse
+  elapse_total_hours_minutes?: ElapseTotal
   infoVidange?: InfoVidange
   lastInfoTrame: InfoTrame
 }

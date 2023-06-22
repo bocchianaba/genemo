@@ -15,6 +15,7 @@ import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { environment } from 'src/environments/environment';
+import { CamerounDatePipe } from '../shared/pipes/cameroun-date.pipe';
 
 const config: SocketIoConfig = { url: environment.backend_socket_url, options: {} };
 
@@ -36,7 +37,7 @@ const config: SocketIoConfig = { url: environment.backend_socket_url, options: {
   providers:[
     ModuleService,
     ToastrService,
-    DatePipe
+    CamerounDatePipe
   ]
 })
 export class ModuleModule { }

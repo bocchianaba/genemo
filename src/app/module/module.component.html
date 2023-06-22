@@ -185,7 +185,7 @@
                   <i class="fa fa-calendar"></i>
                 </div>
                 <small class="col-11" style="text-align: justify;">
-                  dernière trame reçu le <strong>{{module.lastInfoTrame.date | date:"dd MMMM yyyy à HH:mm"}}</strong>
+                  dernière trame reçu le <strong>{{module.lastInfoTrame.date | camerounDate:"dd MMMM yyyy à HH:mm"}}</strong>
                 </small>
               </div>
             </div>
@@ -262,8 +262,8 @@
                 <td [ngClass]="{'fw-bold': (module?.lastInfoTrame?.ph1??0)<180 || (module?.lastInfoTrame?.ph1??0)>240 }">{{module.lastInfoTrame.ph1||0}} V</td>
                 <td [ngClass]="{'fw-bold': (module?.lastInfoTrame?.ph2??0)<180 || (module?.lastInfoTrame?.ph2??0)>240 }">{{module.lastInfoTrame.ph2||0}} V</td>
                 <td [ngClass]="{'fw-bold': (module?.lastInfoTrame?.ph3??0)<180 || (module?.lastInfoTrame?.ph3??0)>240 }">{{module.lastInfoTrame.ph3||0}} V</td>
-                <td>{{module.lastInfoTrame.date | date: 'dd MMMM yyyy à hh:MM'}}</td>
-                <td>{{module.infoVidange?.date | date:'dd MMMM yyyy à hh:MM'}}</td>
+                <td>{{module.lastInfoTrame.date | camerounDate: 'dd MMMM yyyy à hh:MM'}}</td>
+                <td>{{module.infoVidange?.date | camerounDate:'dd MMMM yyyy à hh:MM'}}</td>
                 <td>{{module.infoVidange?.remarque}}</td>
                 <td>
                   <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">

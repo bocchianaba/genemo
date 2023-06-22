@@ -1,5 +1,5 @@
 import { Module, Trame } from './../../../shared/models/module.models';
-import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList, ChangeDetectionStrategy } from '@angular/core';
 import { BehaviorSubject, Observable, map, shareReplay, tap } from 'rxjs';
 import { DataRequired, InfoVidange, Module_info, Trames } from 'src/app/shared/models/module.models';
 import { ModuleService } from '../../services/module.service';
@@ -14,12 +14,14 @@ import { DatePipe } from '@angular/common';
 import { AutoUnsubscribe } from 'src/app/shared/decorators/auto-unsubscribe.decorator';
 import { Data_socket } from 'src/app/shared/models/module-socket.models';
 import { BaseChartDirective } from 'ng2-charts';
+import { CamerounDatePipe } from 'src/app/shared/pipes/cameroun-date.pipe';
 
 @AutoUnsubscribe
 @Component({
   selector: 'app-module-details',
   templateUrl: './module-details.component.html',
-  styleUrls: ['./module-details.component.scss']
+  styleUrls: ['./module-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
@@ -174,7 +176,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     private calendar: NgbCalendar,
     public formatter: NgbDateParserFormatter,
     private socket: Socket,
-    private date_pipe: DatePipe
+    private date_pipe: CamerounDatePipe
   ) {
     this.id=this.route.snapshot.paramMap.get('id')
 		this.fromDate = calendar.getToday();
@@ -187,6 +189,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.loader.start()
+    this.loading=true
     this.module_service.get_module_trames(this.id).subscribe(
       (trames: Trames)=>this.trame_subject.next(trames)
     )
@@ -219,10 +223,18 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           // Utilisez l'instance du composant cible ici
           c?.update();
         });
+        this.loader.stop()
+        this.loading=false
       }
     })
     this.module_simple$=this.module_service.get_simple_module(this.id)
-    this.module_simple$.subscribe(mod=> this.module_simple=mod)
+    this.module_simple$.subscribe({
+      next: mod=> this.module_simple=mod,
+      complete: ()=>{
+        this.loader.stop()
+        this.loading=false
+      }
+    })
     this.vidanges$=this.module_service.get_module_vidanges(this.id)
 
     this.socket.on("incomingTrame",(data: Data_socket)=>{
@@ -233,7 +245,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           module.lastInfoTrame={...data.trame, id:data.trame._id}
           module.data.status=data.trame.status
           return module
-        })
+        }),
+        shareReplay(1)
       )
       this.trames$.subscribe(
         (trames: Trames|null)=>{
@@ -306,11 +319,13 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
             lastInfoTrame: {...trame}
           }
         }
-      )
+      ),
+      shareReplay(1)
     )
   }
 
   page_change(page: number){
+    this.loader.start()
     this.loading=true
     console.log(page)
     this.trames$=this.module_service.get_module_trames(this.id, page)
@@ -323,24 +338,13 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
             lastInfoTrame: {...trame}
           }
         }
-      )
+      ),
+      shareReplay(1)
     )
     this.trames$.subscribe(
       {
         next:(trame)=>{
           console.log({trame})
-          // this.fuel_data.labels=this.module.data.map(
-          //   (mod)=>{
-          //     let data: string[]=[]
-          //     mod.infos.map(
-          //       info=>{
-          //         data.push(info.date)
-          //       }
-          //     )
-          //     return data
-          //   }
-          // )
-          // console.log({labels: this.fuel_data.labels})
         },
         error:(err)=>{
           console.log({err})
@@ -348,6 +352,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         },
         complete:()=>{
           this.loading=false
+          this.loader.stop()
         }
       }
     )
@@ -393,35 +398,41 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
 	}
   filter_date(){
+    this.loading=true
+    this.loader.start()
     console.log({from: this.fromDate,to:this.toDate})
     this.trames$=this.module_service.get_module_trames(this.id,1,10,`${(this.fromDate?.month??1)}-${this.fromDate?.day}-${this.fromDate?.year??0}`,`${(this.toDate?.month??1)}-${this.toDate?.day}-${this.toDate?.year??0}`)
     this.vidanges$=this.module_service.get_module_vidanges(this.id,1,10,`${(this.fromDate?.month??1)}-${this.fromDate?.day}-${this.fromDate?.year??0}`,`${(this.toDate?.month??1)}-${this.toDate?.day}-${this.toDate?.year??0}`)
-    this.trames$.subscribe(
-      (trames: Trames|null)=>{
+    this.trames$.subscribe({
+      next:(trames: Trames|null)=>{
         let data_trames=Object.assign({}, trames)
-      this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
-      this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
-      this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
-      this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
-      this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
-      this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
-      this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
-      this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
-      this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
-      this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
-      this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
-      this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
-      this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
-      this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
-      console.log({fuel: this.fuel_lineChartData.datasets[0].data})
-      console.log({temperature: this.temperature_lineChartData.datasets[0].data})
-      console.log({battery: this.battery_lineChartData.datasets[0].data})
-      console.log({oil_press: this.oil_press_lineChartData.datasets[0].data})
-      console.log({freq: this.freq_lineChartData.datasets[0].data})
-      console.log({phase1: this.phase_lineChartData.datasets[0].data})
-      console.log({phase2: this.phase_lineChartData.datasets[1].data})
-      console.log({phase3: this.phase_lineChartData.datasets[2].data})
-      }
+        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
+        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
+        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
+        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
+        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
+        this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
+        console.log({fuel: this.fuel_lineChartData.datasets[0].data})
+        console.log({temperature: this.temperature_lineChartData.datasets[0].data})
+        console.log({battery: this.battery_lineChartData.datasets[0].data})
+        console.log({oil_press: this.oil_press_lineChartData.datasets[0].data})
+        console.log({freq: this.freq_lineChartData.datasets[0].data})
+        console.log({phase1: this.phase_lineChartData.datasets[0].data})
+        console.log({phase2: this.phase_lineChartData.datasets[1].data})
+        console.log({phase3: this.phase_lineChartData.datasets[2].data})
+      },
+      complete:()=>{
+        this.loading=false
+        this.loader.stop()
+      }}
     )
   }
 }

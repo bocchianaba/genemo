@@ -1,6 +1,6 @@
 <div class="card my-2">
   <div class="card-header d-flex align-items-center justify-content-between">
-    <span>{{title}}</span>
+    <span style="font-size: 0.65rem;">{{title}}</span>
     <i  *ngIf="title!='Fuel' && title!='Pression d\'huile'; else fuel" [class]="'float-end fa fa-'+icon"></i>
 
     <ng-template #fuel>
