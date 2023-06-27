@@ -20,8 +20,7 @@ import { CamerounDatePipe } from 'src/app/shared/pipes/cameroun-date.pipe';
 @Component({
   selector: 'app-module-details',
   templateUrl: './module-details.component.html',
-  styleUrls: ['./module-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./module-details.component.scss']
 })
 export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
@@ -160,7 +159,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
 
   public lineChartType: ChartType = 'line';
   module_simple$!: Observable<Module_info>;
-  module_simple!: Module_info
+  module_s!: Module_info
   trames$!: Observable<Trames|null>;
   vidanges$!: Observable<Data<InfoVidange>>;
   private trame_subject= new BehaviorSubject<Trames|null>(null)
@@ -185,7 +184,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
   }
 
   date_pipe_transform(data_date: any){
-    return this.date_pipe.transform(data_date, "dd MMMM yyyy à HH:mm")
+    return this.date_pipe.transform(data_date, "dddd DD MMMM yyyy à HH:mm")
   }
 
   ngOnInit(): void {
@@ -196,17 +195,17 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     )
     this.trames$.subscribe({
       next: (trames: Trames|null)=>{
-        this.fuel_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.fuel_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.fuel_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
-        this.temperature_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.temperature_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.temperature_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
-        this.battery_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.battery_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.battery_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
-        this.oil_press_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.oil_press_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.oil_press_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
-        this.freq_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.freq_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.freq_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
-        this.phase_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.phase_lineChartData.labels=trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.phase_lineChartData.datasets[0].data=trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
         this.phase_lineChartData.datasets[1].data=trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
         this.phase_lineChartData.datasets[2].data=trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
@@ -229,7 +228,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     })
     this.module_simple$=this.module_service.get_simple_module(this.id)
     this.module_simple$.subscribe({
-      next: mod=> this.module_simple=mod,
+      next: mod=> this.module_s=mod,
       complete: ()=>{
         this.loader.stop()
         this.loading=false
@@ -244,9 +243,15 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           let module=Object.assign({}, module_simple)
           module.lastInfoTrame={...data.trame, id:data.trame._id}
           module.data.status=data.trame.status
+          console.log("trame event",{module})
           return module
         }),
         shareReplay(1)
+      )
+      this.module_simple$.subscribe(
+        (module_simple: Module_info)=>{
+          console.log('trame event', {module_simple})
+        }
       )
       this.trames$.subscribe(
         (trames: Trames|null)=>{
@@ -256,17 +261,17 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           console.log({data_trames})
           console.log({trames})
           // this.trame_subject.next(data_trames)
-        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
-        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
-        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
-        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
-        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
-        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
         this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
         this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
@@ -278,7 +283,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         console.log({phase1: this.phase_lineChartData.datasets[0].data})
         console.log({phase2: this.phase_lineChartData.datasets[1].data})
         console.log({phase3: this.phase_lineChartData.datasets[2].data})
-          if(data.trame.idModule==this.module_simple.data.id) {
+          if(data.trame.idModule==this.module_s.data.id) {
             this.toast.info("Le module vient d'envoyer une nouvelle trame")
             // Accédez aux instances du composant avec les identifiants spécifiques après que la vue a été initialisée
             this.chart?.forEach((c:BaseChartDirective) => {
@@ -315,7 +320,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           const trame=trames?.data.find(t=> t.id==id)
           console.log({trame, id})
           return {
-            data: {...this.module_simple.data},
+            data: {...this.module_s.data},
             lastInfoTrame: {...trame}
           }
         }
@@ -334,7 +339,7 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         (trames: Trames | null)=> {
           const trame=trames?.data[0]
           return {
-            data: {...this.module_simple.data},
+            data: {...this.module_s.data},
             lastInfoTrame: {...trame}
           }
         }
@@ -406,17 +411,17 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     this.trames$.subscribe({
       next:(trames: Trames|null)=>{
         let data_trames=Object.assign({}, trames)
-        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
-        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
-        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
-        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
-        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
-        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dd MMMM yyyy à HH:mm"))
+        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
         this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
         this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
         this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]

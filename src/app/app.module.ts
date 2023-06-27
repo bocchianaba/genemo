@@ -14,7 +14,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 
 
-// registerLocaleData(localeFr);
+registerLocaleData(localeFr);
 
 const ngx_ui_loader_configuration:NgxUiLoaderConfig =
 {
@@ -63,7 +63,7 @@ const ngx_ui_loader_configuration:NgxUiLoaderConfig =
     NgbModule
   ],
   providers: [
-    // { provide: LOCALE_ID, useValue: 'fr-CM' }
+    { provide: LOCALE_ID, useValue: 'fr-CM' }
   ],
   bootstrap: [AppComponent]
 })

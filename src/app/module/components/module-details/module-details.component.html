@@ -13,7 +13,7 @@
             <div class="row d-flex" *ngIf="trames$ |async as trames">
               <label for="select_form">Sélectionner une trame</label>
               <select id="select_form" name="select_form" class="form-select" (change)="update_module_simple($event)" aria-label="Default select example">
-                <option [value]="mod.id" *ngFor="let mod of trames.data" [id]="mod.id">{{mod.date | camerounDate: 'dd MMMM yyyy à HH:mm'}}</option>
+                <option [value]="mod.id" *ngFor="let mod of trames.data" [id]="mod.id">{{mod.date | camerounDate: 'dddd DD MMMM yyyy à HH:mm'}}</option>
               </select>
               <ngb-pagination *ngIf="trames.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
                 [(page)]="trames.pagination.page"
@@ -28,7 +28,7 @@
           <div class="card border-primary my-4">
             <div class="card-body">
               <h3 class="card-title text-center fw-bold">Info Récentes</h3>
-              <small> <i class="fa fa-clock-o mx" aria-hidden="true"></i> Reçu le <strong>{{module_simple?.lastInfoTrame?.date | camerounDate: "dd MMMM yyyy à HH:mm"}}</strong></small>
+              <small> <i class="fa fa-clock-o mx" aria-hidden="true"></i> Reçu le <strong>{{module_simple?.lastInfoTrame?.date | camerounDate: "dddd DD MMMM yyyy à HH:mm"}}</strong></small>
               <div class="row">
                 <div class="col-12 d-flex align-items-center justify-content-center">
                   <div class="row">
