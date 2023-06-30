@@ -243,6 +243,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           let module=Object.assign({}, module_simple)
           module.lastInfoTrame={...data.trame, id:data.trame._id}
           module.data.status=data.trame.status
+          module.data.elapse_hours_minutes=data.module.elapse_hours_minutes
+          module.data.elapse_total_hours_minutes=data.module.elapse_total_hours_minutes
           console.log("trame event",{module})
           return module
         }),

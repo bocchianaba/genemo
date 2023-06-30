@@ -1,6 +1,6 @@
 <ng-container *ngIf="module_simple$| async as module_simple">
   <app-banner [title]="module_simple.data.stationName"
-    [description]="'A déjà fonctionner '+module_simple.data.elapse_total_hours_minutes?.hours+' heure(s) '+module_simple.data.elapse_total_hours_minutes?.minutes+' minute(s) , depuis la création <br> Fonctionne '+module_simple.data.elapse_hours_minutes?.hours+' heure(s) '+module_simple.data.elapse_hours_minutes?.minutes+' minute(s) , depuis la dernière vidange'"></app-banner>
+    [description]="'A déjà fonctionner '+module_simple.data.elapse_total_hours_minutes?.hours+' H '+((module_simple.data.elapse_total_hours_minutes?.minutes)?module_simple.data.elapse_total_hours_minutes?.minutes:'00')+' M , depuis la création <br> Fonctionne '+module_simple.data.elapse_hours_minutes?.hours+' H '+((module_simple.data.elapse_hours_minutes?.minutes)?module_simple.data.elapse_hours_minutes?.minutes:'00')+' M , depuis la dernière vidange'"></app-banner>
   <section>
     <div *ngIf="trames$ |async ; else no_module" class="row d-flex justify-content-between p-4 m-0">
       <ng-container>
