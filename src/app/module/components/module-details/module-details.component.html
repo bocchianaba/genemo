@@ -1,6 +1,13 @@
 <ng-container *ngIf="module_simple$| async as module_simple">
-  <app-banner [title]="module_simple.data.stationName"
-    [description]="'A déjà fonctionner '+module_simple.data.elapse_total_hours_minutes?.hours+' H '+((module_simple.data.elapse_total_hours_minutes?.minutes)?module_simple.data.elapse_total_hours_minutes?.minutes:'00')+' M , depuis la création <br> Fonctionne '+module_simple.data.elapse_hours_minutes?.hours+' H '+((module_simple.data.elapse_hours_minutes?.minutes)?module_simple.data.elapse_hours_minutes?.minutes:'00')+' M , depuis la dernière vidange'"></app-banner>
+  <ng-container>
+    <app-banner
+      [description]="true"
+      [title]="module_simple.data.stationName"
+      [duree_totale]="module_simple.data.elapse_total_hours_minutes?.hours+' h '+((module_simple.data.elapse_total_hours_minutes?.minutes)?module_simple.data.elapse_total_hours_minutes?.minutes:'00')+' m '"
+      [duree_vidange]="module_simple.data.elapse_hours_minutes?.hours+' h '+((module_simple.data.elapse_hours_minutes?.minutes)?module_simple.data.elapse_hours_minutes?.minutes:'00')+' m '"
+      [date_vidange]="'22/05/20 17:25'"
+      ></app-banner>
+    </ng-container>
   <section>
     <div *ngIf="trames$ |async ; else no_module" class="row d-flex justify-content-between p-4 m-0">
       <ng-container>

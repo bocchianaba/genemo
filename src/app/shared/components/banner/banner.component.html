@@ -1,6 +1,22 @@
 <div class="jumbotron">
   <div class="container h-100 w-100 d-flex align-items-center justify-content-center flex-column">
     <h1 class="text-center text-white">{{title}}</h1>
-    <h6 class="text-center text-white mt-4" *ngIf="description" [innerHTML]="description"></h6>
+    <div class="row d-flex justify-content-center text-white" *ngIf="description">
+      <div class="col-sm-11 col-md-10 col-lg-8 text-center">
+        <h4 style="text-decoration: underline;">Durée de Fonctionnement</h4>
+      </div>
+      <div class="col-sm-11 col-md-10 col-lg-8">
+        <h5 class="float-start">Totale :</h5>
+        <h5 class="float-end">{{duree_totale}}</h5>
+      </div>
+      <div class="col-sm-11 col-md-10 col-lg-8">
+        <h5 class="float-start">Depuis vidange :</h5>
+        <h5 class="float-end">{{duree_vidange}}</h5>
+      </div>
+      <div class="col-sm-11 col-md-10 col-lg-8">
+        <h5 class="float-start">Vidange :</h5>
+        <h5 class="float-end">{{date_vidange}}</h5>
+      </div>
+    </div>
   </div>
 </div>

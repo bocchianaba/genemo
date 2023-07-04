@@ -8,7 +8,10 @@ import { Component, Input, OnInit } from '@angular/core';
 export class BannerComponent implements OnInit {
 
   @Input() title?: string
-  @Input() description?: string
+  @Input() description?: boolean
+  @Input() duree_totale?: any
+  @Input() duree_vidange?: any
+  @Input() date_vidange?: any
 
   constructor() { }
 
