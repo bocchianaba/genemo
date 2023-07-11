@@ -150,6 +150,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
     labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
   };
   public lineChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
     elements: {
       line: {
         tension: 0.5

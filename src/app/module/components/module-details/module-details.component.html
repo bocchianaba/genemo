@@ -1,15 +1,32 @@
-<ng-container *ngIf="module_simple$| async as module_simple">
+<ng-container *ngIf="module_simple$ | async as module_simple">
   <ng-container>
     <app-banner
       [description]="true"
       [title]="module_simple.data.stationName"
-      [duree_totale]="module_simple.data.elapse_total_hours_minutes?.hours+' h '+((module_simple.data.elapse_total_hours_minutes?.minutes)?module_simple.data.elapse_total_hours_minutes?.minutes:'00')+' m '"
-      [duree_vidange]="module_simple.data.elapse_hours_minutes?.hours+' h '+((module_simple.data.elapse_hours_minutes?.minutes)?module_simple.data.elapse_hours_minutes?.minutes:'00')+' m '"
+      [duree_totale]="
+        module_simple.data.elapse_total_hours_minutes?.hours +
+        ' h ' +
+        (module_simple.data.elapse_total_hours_minutes?.minutes
+          ? module_simple.data.elapse_total_hours_minutes?.minutes
+          : '00') +
+        ' m '
+      "
+      [duree_vidange]="
+        module_simple.data.elapse_hours_minutes?.hours +
+        ' h ' +
+        (module_simple.data.elapse_hours_minutes?.minutes
+          ? module_simple.data.elapse_hours_minutes?.minutes
+          : '00') +
+        ' m '
+      "
       [date_vidange]="'22/05/20 17:25'"
-      ></app-banner>
-    </ng-container>
+    ></app-banner>
+  </ng-container>
   <section>
-    <div *ngIf="trames$ |async ; else no_module" class="row d-flex justify-content-between p-4 m-0">
+    <div
+      *ngIf="trames$ | async; else no_module"
+      class="row d-flex justify-content-between p-4 m-0"
+    >
       <ng-container>
         <div class="col-xs-11 col-sm-10 col-md-5 text-center">
           <a routerLink="/modules" class="mb-4 pb-4 text-center">
@@ -17,44 +34,203 @@
             Liste des modules
           </a>
           <div class="text-center mt-4">
-            <div class="row d-flex" *ngIf="trames$ |async as trames">
+            <div class="row d-flex" *ngIf="trames$ | async as trames">
               <label for="select_form">Sélectionner une trame</label>
-              <select id="select_form" name="select_form" class="form-select" (change)="update_module_simple($event)" aria-label="Default select example">
-                <option [value]="mod.id" *ngFor="let mod of trames.data" [id]="mod.id">{{mod.date | camerounDate: 'dddd DD MMMM yyyy à HH:mm'}}</option>
+              <select
+                id="select_form"
+                name="select_form"
+                class="form-select"
+                (change)="update_module_simple($event)"
+                aria-label="Default select example"
+              >
+                <option
+                  [value]="mod.id"
+                  *ngFor="let mod of trames.data"
+                  [id]="mod.id"
+                >
+                  {{ mod.date | camerounDate : "dddd DD MMMM yyyy à HH:mm" }}
+                </option>
               </select>
-              <ngb-pagination *ngIf="trames.pagination.totalPages" class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
+              <ngb-pagination
+                *ngIf="trames.pagination.totalPages"
+                class="d-flex justify-content-center my-4"
+                (pageChange)="page_change($event)"
                 [(page)]="trames.pagination.page"
                 [pageSize]="trames.pagination.limit"
                 [maxSize]="5"
                 [rotate]="true"
                 [ellipses]="false"
-                [collectionSize]="trames.pagination.totalCount">
+                [collectionSize]="trames.pagination.totalCount"
+              >
               </ngb-pagination>
             </div>
           </div>
           <div class="card border-primary my-4">
             <div class="card-body">
               <h3 class="card-title text-center fw-bold">Info Récentes</h3>
-              <small> <i class="fa fa-clock-o mx" aria-hidden="true"></i> Reçu le <strong>{{module_simple?.lastInfoTrame?.date | camerounDate: "dddd DD MMMM yyyy à HH:mm"}}</strong></small>
+              <small>
+                <i class="fa fa-clock-o mx" aria-hidden="true"></i> Reçu le
+                <strong>{{
+                  module_simple?.lastInfoTrame?.date
+                    | camerounDate : "dddd DD MMMM yyyy à HH:mm"
+                }}</strong></small
+              >
               <div class="row">
-                <div class="col-12 d-flex align-items-center justify-content-center">
+                <div
+                  class="col-12 d-flex align-items-center justify-content-center"
+                >
                   <div class="row">
-                    <app-character-item class="col-6" [title]="'Temperature'" [mesure]="'°C'" [value]="module_simple?.lastInfoTrame?.temp||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.temp??0)>95}"
-                      [icon]="'thermometer-quarter'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'%'" [title]="'Fuel Level'" [value]="module_simple?.lastInfoTrame?.fuel||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.fuel??0)<10}"
-                      [icon]="'tint'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'VDC'" [title]="'Batterie'" [value]="module_simple?.lastInfoTrame?.bat||0" [ngClass]="{'text-danger': (module_simple?.lastInfoTrame?.bat??0)<10}"
-                     [icon]="'battery-empty'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'Bar'" [title]="'Pression d\'huile'" [value]="module_simple?.lastInfoTrame?.oilPress||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.oilPress??0)<10}"
-                      [icon]="'battery-quarter'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'Hz'" [title]="'Fréquence'" [value]="module_simple?.lastInfoTrame?.freq||0" [ngClass]="{'text-danger': (module_simple?.lastInfoTrame?.freq??0)<45 || (module_simple?.lastInfoTrame?.freq??0)>55}"
-                      [icon]="'tint'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'V'" [title]="'Phase 1'" [value]="module_simple?.lastInfoTrame?.ph1||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.ph1??0)<180 || (module_simple.lastInfoTrame.ph1??0)>240}"
-                     [icon]="'bolt'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'V'" [title]="'Phase 2'" [value]="module_simple?.lastInfoTrame?.ph2||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.ph2??0)<180 || (module_simple.lastInfoTrame.ph2??0)>240}"
-                     [icon]="'bolt'"></app-character-item>
-                    <app-character-item class="col-6" [mesure]="'V'" [title]="'Phase 3'" [value]="module_simple?.lastInfoTrame?.ph3||0" [ngClass]="{'text-danger': (module_simple.lastInfoTrame.ph3??0)<180 || (module_simple.lastInfoTrame.ph3??0)>240}"
-                     [icon]="'bolt'"></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [title]="'Temperature'"
+                      [mesure]="'°C'"
+                      [value]="module_simple?.lastInfoTrame?.temp || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple.lastInfoTrame.temp ?? 0) > 95
+                      }"
+                      [icon]="'thermometer-quarter'"
+                    ></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [mesure]="'%'"
+                      [title]="'Fuel Level'"
+                      [value]="module_simple?.lastInfoTrame?.fuel || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple.lastInfoTrame.fuel ?? 0) < 10
+                      }"
+                      [icon]="'tint'"
+                    ></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [mesure]="'VDC'"
+                      [title]="'Batterie'"
+                      [value]="module_simple?.lastInfoTrame?.bat || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple?.lastInfoTrame?.bat ?? 0) < 10
+                      }"
+                      [icon]="'battery-empty'"
+                    ></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [mesure]="'Bar'"
+                      [title]="'Pression d\'huile'"
+                      [value]="module_simple?.lastInfoTrame?.oilPress || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple.lastInfoTrame.oilPress ?? 0) < 10
+                      }"
+                      [icon]="'battery-quarter'"
+                    ></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [mesure]="'Hz'"
+                      [title]="'Fréquence'"
+                      [value]="module_simple?.lastInfoTrame?.freq || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple?.lastInfoTrame?.freq ?? 0) < 45 ||
+                          (module_simple?.lastInfoTrame?.freq ?? 0) > 55
+                      }"
+                      [icon]="'tint'"
+                    ></app-character-item>
+                    <!-- <app-character-item
+                      class="col-6"
+                      [mesure]="'V'"
+                      [title]="'Phase 1'"
+                      [value]="module_simple?.lastInfoTrame?.ph1 || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple.lastInfoTrame.ph1 ?? 0) < 180 ||
+                          (module_simple.lastInfoTrame.ph1 ?? 0) > 240
+                      }"
+                      [icon]="'bolt'"
+                    ></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [mesure]="'V'"
+                      [title]="'Phase 2'"
+                      [value]="module_simple?.lastInfoTrame?.ph2 || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple.lastInfoTrame.ph2 ?? 0) < 180 ||
+                          (module_simple.lastInfoTrame.ph2 ?? 0) > 240
+                      }"
+                      [icon]="'bolt'"
+                    ></app-character-item>
+                    <app-character-item
+                      class="col-6"
+                      [mesure]="'V'"
+                      [title]="'Phase 3'"
+                      [value]="module_simple?.lastInfoTrame?.ph3 || 0"
+                      [ngClass]="{
+                        'text-danger':
+                          (module_simple.lastInfoTrame.ph3 ?? 0) < 180 ||
+                          (module_simple.lastInfoTrame.ph3 ?? 0) > 240
+                      }"
+                      [icon]="'bolt'"
+                    ></app-character-item> -->
+                    <div class="col-12">
+                      <div class="row">
+                        <div class="card col-12">
+                          <div class="card-header align-items-center">
+                            Voltage
+                            <i class="float-end fa fa-bolt"></i>
+                          </div>
+                          <div class="card-body">
+                            <div class="row d-flex justify-content-between">
+                              <div class="col-4"
+                                [ngClass]="{
+                                  'text-danger':
+                                    (module_simple.lastInfoTrame.ph1 ?? 0) < 180 ||
+                                    (module_simple.lastInfoTrame.ph1 ?? 0) > 240
+                                }">
+                                <span style="font-size: 0.65rem">Phase 1</span>
+                                <h5
+                                  class="card-title"
+                                  style="font-weight: bold; font-size: 2rem"
+                                >
+                                  {{ module_simple?.lastInfoTrame?.ph1 || 0 }}
+                                  <span class="ctext">V</span>
+                                </h5>
+                              </div>
+                              <div class="col-4"
+                                [ngClass]="{
+                                  'text-danger':
+                                    (module_simple.lastInfoTrame.ph2 ?? 0) < 180 ||
+                                    (module_simple.lastInfoTrame.ph2 ?? 0) > 240
+                                }">
+                                <span style="font-size: 0.65rem">Phase 2</span>
+                                <h5
+                                  class="card-title"
+                                  style="font-weight: bold; font-size: 2rem"
+                                >
+                                  {{ module_simple?.lastInfoTrame?.ph2 || 0 }}
+                                  <span class="ctext">V</span>
+                                </h5>
+                              </div>
+                              <div class="col-4"
+                                [ngClass]="{
+                                  'text-danger':
+                                    (module_simple.lastInfoTrame.ph3 ?? 0) < 180 ||
+                                    (module_simple.lastInfoTrame.ph3 ?? 0) > 240
+                                }">
+                                <span style="font-size: 0.65rem">Phase 3</span>
+                                <h5
+                                  class="card-title"
+                                  style="font-weight: bold; font-size: 2rem"
+                                >
+                                  {{ module_simple?.lastInfoTrame?.ph3 || 0 }}
+                                  <span class="ctext">V</span>
+                                </h5>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -62,7 +238,7 @@
           </div>
         </div>
         <div class="col-xs-11 col-sm-10 col-md-7">
-          <div class="row justify-content-center d-flex">
+          <div class="row justify-content-center d-flex px-sm-0 px-xs-0 mx-sm-0 mx-xs-0">
             <div class="col-12">
               <div class="row justify-content-center">
                 <form class="col-sm-10 col-md-6 justify-content-center mb-4">
@@ -104,9 +280,15 @@
                           placeholder="yyyy-mm-dd"
                           name="dpFromDate"
                           [value]="formatter.format(fromDate)"
-                          (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                          (input)="
+                            fromDate = validateInput(fromDate, dpFromDate.value)
+                          "
                         />
-                        <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button">
+                        <button
+                          class="btn btn-outline-secondary"
+                          (click)="datepicker.toggle()"
+                          type="button"
+                        >
                           <i class="fa fa-calendar" aria-hidden="true"></i>
                         </button>
                       </div>
@@ -119,42 +301,86 @@
                           placeholder="yyyy-mm-dd"
                           name="dpToDate"
                           [value]="formatter.format(toDate)"
-                          (input)="toDate = validateInput(toDate, dpToDate.value)"
+                          (input)="
+                            toDate = validateInput(toDate, dpToDate.value)
+                          "
                         />
-                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
+                        <button
+                          class="btn btn-outline-secondary bi bi-calendar3"
+                          (click)="datepicker.toggle()"
+                          type="button"
+                        >
                           <i class="fa fa-calendar" aria-hidden="true"></i>
                         </button>
                       </div>
                     </div>
                     <div class="col-12 text-center">
-                      <button class="btn btn-primary" (click)="filter_date()"> Filtrer les trames par dates</button>
+                      <button class="btn btn-primary" (click)="filter_date()">
+                        Filtrer les trames par dates
+                      </button>
                     </div>
                   </div>
                 </form>
               </div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12  my-4">
-              <canvas baseChart class="chart" [data]="fuel_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+            <div class="col-xs-12 col-sm-12 col-md-12 my-4 px-sm-0 px-xs-0 mx-sm-0 mx-xs-0" style="height: 300px;width:100%">
+              <canvas
+                baseChart
+                class="chart"
+                [data]="fuel_lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType"
+              >
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 my-4">
-              <canvas baseChart class="chart" [data]="temperature_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+            <div class="col-xs-12 col-sm-12 col-md-12 my-4 px-sm-0 px-xs-0 mx-sm-0 mx-xs-0" style="height: 300px;width:100%">
+              <canvas
+                baseChart
+                class="chart"
+                [data]="temperature_lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType"
+              >
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 my-4">
-              <canvas baseChart class="chart" [data]="battery_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+            <!-- <div class="col-xs-12 col-sm-12 col-md-12 my-4">
+              <canvas
+                baseChart
+                class="chart"
+                [data]="battery_lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType"
+              >
+              </canvas>
+            </div> -->
+            <div class="col-xs-12 col-sm-12 col-md-12 my-4 px-sm-0 px-xs-0 mx-sm-0 mx-xs-0" style="height: 300px;width:100%">
+              <canvas
+                baseChart
+                class="chart"
+                [data]="oil_press_lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType"
+              >
               </canvas>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 my-4">
-              <canvas baseChart class="chart" [data]="oil_press_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+            <!-- <div class="col-xs-12 col-sm-12 col-md-12 my-4">
+              <canvas
+                baseChart
+                class="chart"
+                [data]="freq_lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType"
+              >
               </canvas>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 my-4">
-              <canvas baseChart class="chart" [data]="freq_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-              </canvas>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 my-4">
-              <canvas baseChart class="chart" [data]="phase_lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+            </div> -->
+            <div class="col-xs-12 col-sm-12 col-md-12 my-4 px-sm-0 px-xs-0 mx-sm-0 mx-xs-0" style="height: 300px;width:100%">
+              <canvas
+                baseChart
+                class="chart"
+                [data]="phase_lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType"
+              >
               </canvas>
             </div>
           </div>
@@ -272,15 +498,18 @@
       </ng-container>
     </div>
     <ng-template #no_module>
-      <div *ngIf="!loading" class="row d-flex justify-content-center align-items-center">
+      <div
+        *ngIf="!loading"
+        class="row d-flex justify-content-center align-items-center"
+      >
         <div class="col-sm-10 col-md-6 col-lg-4">
           <div class="row justify-content-center">
-            <img src="assets/error.png" alt="error image">
+            <img src="assets/error.png" alt="error image" />
           </div>
         </div>
         <h1 class="text-center mt-4 pt-4 text-danger">
           <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-          {{err_message}}
+          {{ err_message }}
         </h1>
         <p class="text-center">Module introuvable.</p>
         <a routerLink="/modules" class="mb-4 pb-4 text-center">
