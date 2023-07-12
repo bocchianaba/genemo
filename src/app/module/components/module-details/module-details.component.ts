@@ -244,7 +244,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
         map((module_simple:Module_info)=>{
           let module=Object.assign({}, module_simple)
           module.lastInfoTrame={...data.trame, id:data.trame._id}
-          module.data.status=data.trame.status
+          module.lastInfoVidange.date=data.trame.date
+          module.data.status=data.module.status
           module.data.elapse_hours_minutes=data.module.elapse_hours_minutes
           module.data.elapse_total_hours_minutes=data.module.elapse_total_hours_minutes
           console.log("trame event",{module})
@@ -325,7 +326,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           console.log({trame, id})
           return {
             data: {...this.module_s.data},
-            lastInfoTrame: {...trame}
+            lastInfoTrame: {...trame},
+            lastInfoVidange: {...this.module_s.lastInfoVidange}
           }
         }
       ),
@@ -344,7 +346,8 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           const trame=trames?.data[0]
           return {
             data: {...this.module_s.data},
-            lastInfoTrame: {...trame}
+            lastInfoTrame: {...trame},
+            lastInfoVidange: {...this.module_s.lastInfoVidange}
           }
         }
       ),

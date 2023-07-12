@@ -1,6 +1,7 @@
 <ng-container *ngIf="module_simple$ | async as module_simple">
   <ng-container>
     <app-banner
+      *ngIf="vidanges$ |async as vidanges"
       [description]="true"
       [title]="module_simple.data.stationName"
       [duree_totale]="
@@ -19,7 +20,7 @@
           : '00') +
         ' m '
       "
-      [date_vidange]="'22/05/20 17:25'"
+      [date_vidange]="module_simple.lastInfoVidange.date"
     ></app-banner>
   </ng-container>
   <section>
@@ -67,6 +68,17 @@
           </div>
           <div class="card border-primary my-4">
             <div class="card-body">
+              <h3>
+                <span placement="left" [ngbTooltip]="module_simple.data.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module_simple.data?.status=='NOT_RUNNING/FAULT' ||module_simple.data?.status=='NOT_RUNNING'" class="text-warning">
+                  <i class="fa fa-power-off mx-2"></i> En Arrêt
+                </span>
+                <span placement="left" [ngbTooltip]="module_simple.data.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module_simple.data?.status=='RUNNING/FAULT' || module_simple.data?.status=='RUNNING'" class="text-success">
+                  <i class="fa fa-circle-o-notch fa-spin "></i> En fonction
+                </span>
+                <span placement="left" [ngbTooltip]="module_simple.data.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module_simple.data?.status=='STOPPED'" class="text-danger">
+                  <i class="fa fa-exclamation-triangle "></i> Arrêt Brusque
+                </span>
+              </h3>
               <h3 class="card-title text-center fw-bold">Info Récentes</h3>
               <small>
                 <i class="fa fa-clock-o mx" aria-hidden="true"></i> Reçu le

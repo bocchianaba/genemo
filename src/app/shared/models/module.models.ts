@@ -25,6 +25,7 @@ export interface Trames{
 }
 
 export interface Module_info{
+  lastInfoVidange: InfoVidange
   data: Module
   lastInfoTrame: InfoTrame
 }

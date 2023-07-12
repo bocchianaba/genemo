@@ -15,7 +15,11 @@
       </div>
       <div class="col-sm-11 col-md-10 col-lg-8">
         <h5 class="float-start">Vidange :</h5>
-        <h5 class="float-end">{{date_vidange}}</h5>
+        
+        <h5 class="float-end" *ngIf="date_vidange; else date_vidange_null">{{date_vidange | camerounDate: "DD/MM/yyyy à HH:mm"}}</h5>
+        <ng-template #date_vidange_null>
+          <h5 class="float-end">Aucune vidange</h5>
+        </ng-template>
       </div>
     </div>
   </div>
