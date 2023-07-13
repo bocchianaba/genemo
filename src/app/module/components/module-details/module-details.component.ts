@@ -156,6 +156,13 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       line: {
         tension: 0.5
       }
+    },
+    scales: {
+      x: {
+        ticks: {
+          display: window.innerWidth > 767 // Masque les étiquettes sur les appareils mobiles avec une largeur d'écran inférieure à 768 pixels
+        }
+      }
     }
   };
 
@@ -243,10 +250,13 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
       this.module_simple$=this.module_simple$.pipe(
         map((module_simple:Module_info)=>{
           let module=Object.assign({}, module_simple)
-          module.lastInfoTrame={...data.trame, id:data.trame._id}
+          if(data.module.status!='STOPPED')
+            module.lastInfoTrame={...data.trame }
+          module.lastInfoTrame.id=data.trame._id
           module.lastInfoVidange.date=data.trame.date
           module.data.status=data.module.status
           module.data.elapse_hours_minutes=data.module.elapse_hours_minutes
+          module.data.elapse_total=data.module.elapse_total
           module.data.elapse_total_hours_minutes=data.module.elapse_total_hours_minutes
           console.log("trame event",{module})
           return module
@@ -266,20 +276,22 @@ export class ModuleDetailsComponent implements OnInit, OnDestroy {
           console.log({data_trames})
           console.log({trames})
           // this.trame_subject.next(data_trames)
-        this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
-        this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
-        this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
-        this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
-        this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
-        this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
-        this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
-        this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
-        this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
-        this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
-        this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
-        this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
-        this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
-        this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
+        if(data.module.status!='STOPPED'){
+          this.fuel_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
+          this.fuel_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.fuel)??[0,0,0,0,0,0,0,0,]
+          this.temperature_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
+          this.temperature_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.temp)??[0,0,0,0,0,0,0,0,]
+          this.battery_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
+          this.battery_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame.bat)??[0,0,0,0,0,0,0,0,]
+          this.oil_press_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
+          this.oil_press_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.oilPress??0)??[0,0,0,0,0,0,0,0,]
+          this.freq_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
+          this.freq_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.freq??0)??[0,0,0,0,0,0,0,0,]
+          this.phase_lineChartData.labels=data_trames?.data.map((trame: Trame)=> this.date_pipe.transform(trame.date, "dddd DD MMMM yyyy à HH:mm"))
+          this.phase_lineChartData.datasets[0].data=data_trames?.data.map((trame: Trame)=> trame?.ph1??0)??[0,0,0,0,0,0,0,0,]
+          this.phase_lineChartData.datasets[1].data=data_trames?.data.map((trame: Trame)=> trame?.ph2??0)??[0,0,0,0,0,0,0,0,]
+          this.phase_lineChartData.datasets[2].data=data_trames?.data.map((trame: Trame)=> trame?.ph3??0)??[0,0,0,0,0,0,0,0,]
+        }
         console.log({fuel: this.fuel_lineChartData.datasets[0].data})
         console.log({temperature: this.temperature_lineChartData.datasets[0].data})
         console.log({battery: this.battery_lineChartData.datasets[0].data})

@@ -13,10 +13,10 @@
         ' m '
       "
       [duree_vidange]="
-        module_simple.data.elapse_hours_minutes?.hours +
+        module_simple.data.elapse_total.hours +
         ' h ' +
-        (module_simple.data.elapse_hours_minutes?.minutes
-          ? module_simple.data.elapse_hours_minutes?.minutes
+        (module_simple.data.elapse_total.minutes
+          ? module_simple.data.elapse_total.minutes
           : '00') +
         ' m '
       "
@@ -69,7 +69,7 @@
           <div class="card border-primary my-4">
             <div class="card-body">
               <h3>
-                <span placement="left" [ngbTooltip]="module_simple.data.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module_simple.data?.status=='NOT_RUNNING/FAULT' ||module_simple.data?.status=='NOT_RUNNING'" class="text-warning">
+                <span placement="left" [ngbTooltip]="module_simple.data.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module_simple.data?.status=='NOT_RUNNING/FAULT' ||module_simple.data?.status=='NOT_RUNNING'" class="text-danger">
                   <i class="fa fa-power-off mx-2"></i> En Arrêt
                 </span>
                 <span placement="left" [ngbTooltip]="module_simple.data.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module_simple.data?.status=='RUNNING/FAULT' || module_simple.data?.status=='RUNNING'" class="text-success">
@@ -185,7 +185,7 @@
                       [icon]="'bolt'"
                     ></app-character-item> -->
                     <div class="col-12">
-                      <div class="row">
+                      <div class="row px-2 py-2">
                         <div class="card col-12">
                           <div class="card-header align-items-center">
                             Voltage
@@ -338,7 +338,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12 my-4 px-sm-0 px-xs-0 mx-sm-0 mx-xs-0" style="height: 300px;width:100%">
               <canvas
                 baseChart
-                class="chart"
+                class="hide-x-axis chart"
                 [data]="fuel_lineChartData"
                 [options]="lineChartOptions"
                 [type]="lineChartType"
