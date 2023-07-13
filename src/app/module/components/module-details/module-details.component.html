@@ -13,10 +13,10 @@
         ' m '
       "
       [duree_vidange]="
-        module_simple.data.elapse_total.hours +
+        module_simple.data.elapse_hours_minutes?.hours +
         ' h ' +
-        (module_simple.data.elapse_total.minutes
-          ? module_simple.data.elapse_total.minutes
+        (module_simple.data.elapse_hours_minutes?.minutes
+          ? module_simple.data.elapse_hours_minutes?.minutes
           : '00') +
         ' m '
       "
