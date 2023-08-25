@@ -7,46 +7,57 @@ import { Store } from '@ngrx/store';
 import { load, logout } from '../store/user/user.action';
 import { AutoUnsubscribe } from '../shared/decorators/auto-unsubscribe.decorator';
 import { Socket } from 'ngx-socket-io';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @AutoUnsubscribe
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
+  styleUrls: ['./auth.component.scss'],
 })
 export class AuthComponent implements OnInit, OnDestroy {
+  username = '';
+  password = '';
+  show = false;
+  user!: User;
 
-  username=''
-  password=''
-  show=false
-  user!: User
+  loginForm: FormGroup;
 
-  constructor(private socket: Socket, private auth_service: AuthService, private toast: ToastrService, private router: Router, private store: Store<{user: User}>) { }
-
-  ngOnInit(): void {
+  constructor(
+    private socket: Socket,
+    private toast: ToastrService,
+    private router: Router,
+    private store: Store<{ user: User }>,
+    private fb: FormBuilder
+  ) {
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+    });
   }
-  ngOnDestroy(): void {
-      
-  }
 
-  login(){
-    console.log({username: this.username, password: this.password})
-    this.store.dispatch(load({username: this.username, password: this.password}))
-    console.log({user: this.user})
-    this.store.select('user').subscribe(
-      (user: User)=>{
-        if(!!user){
-          this.socket.emit('join', {idUser: user.id})
-          this.toast.success("Heureux de vous revoir "+user.username+' !')
-          if(user.roles.map(role=>role.name).includes('admin'))
-            this.router.navigateByUrl("/feature/users")
-          else if (user.roles.map(role=>role.name).includes('user'))
-            this.router.navigateByUrl("/feature/cities")
-          else 
-            this.router.navigateByUrl("/feature/cities")
-        }
+  ngOnInit(): void {}
+  ngOnDestroy(): void {}
+
+  login() {
+    console.log({ username: this.username, password: this.password });
+    this.store.dispatch(
+      load({
+        username: this.loginForm.get('username')?.value,
+        password: this.loginForm.get('password')?.value,
+      })
+    );
+    console.log({ user: this.user });
+    this.store.select('user').subscribe((user: User) => {
+      if (!!user) {
+        this.socket.emit('join', { idUser: user.id });
+        this.toast.success('Heureux de vous revoir ' + user.username + ' !');
+        if (user.roles.map((role) => role.name).includes('admin'))
+          this.router.navigateByUrl('/feature/users');
+        else if (user.roles.map((role) => role.name).includes('user'))
+          this.router.navigateByUrl('/feature/cities');
+        else this.router.navigateByUrl('/feature/cities');
       }
-    )
+    });
   }
-
 }
