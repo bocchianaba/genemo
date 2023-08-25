@@ -8,6 +8,12 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class UserService {
+  change_user_password(password: string, newPassword: string, id: string): Observable<User> {
+    const body={
+      credentials: {password, newPassword}
+    }
+    return this.http.patch<User>(`${environment.backend_url}/users/${id}/credentials`, body)
+  }
   get_user_detail(id: string): Observable<User> {
     return this.http.get<User>(`${environment.backend_url}/users/${id}`)
   }

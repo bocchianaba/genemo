@@ -11,7 +11,7 @@ import { ModuleItemComponent } from '../module/components/module-item/module-ite
 import { NgbDatepickerModule, NgbPaginationModule, NgbTooltip, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SharedModule } from '../shared/shared.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog'
 import { CamerounDatePipe } from '../shared/pipes/cameroun-date.pipe';
 import { BannerComponent } from '../shared/components/banner/banner.component';
@@ -36,6 +36,7 @@ import { CitiesComponent } from './components/cities/cities.component';
 import {DropdownModule} from 'primeng/dropdown'
 import {TabViewModule} from 'primeng/tabview';
 import {TableModule} from 'primeng/table';
+import { CardModule } from 'primeng/card';
 
 const socket_config: SocketIoConfig= {url: environment.backend_socket_url}
 
@@ -69,7 +70,9 @@ const socket_config: SocketIoConfig= {url: environment.backend_socket_url}
     MenuModule,
     DropdownModule,
     TabViewModule,
-    TableModule
+    TableModule,
+    ReactiveFormsModule,
+    CardModule
   ],
   providers: [
     ModuleService,

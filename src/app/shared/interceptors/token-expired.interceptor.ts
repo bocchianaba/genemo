@@ -24,7 +24,7 @@ export class TokenExpiredInterceptor implements HttpInterceptor {
         err => {
           if (err.status === 401) {
             // token expired, redirect to login page
-            this.router.navigate(['/auth/login',{}]);
+            this.router.navigate(['/login',{}]);
             this.toast.info('Votre connexion a expiré',"Expiration")
           }
           if (err.status === 403) {

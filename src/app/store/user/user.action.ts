@@ -17,6 +17,11 @@ export const load_success = createAction(
   props<{user: User| null}>()
 );
 
+export const load_info = createAction(
+  '[LOAD User Info] user loaded with Success',
+  props<{user: User| null}>()
+);
+
 export const load_failure = createAction(
   '[LOAD User] user loaded with Failure',
   props<{error: string}>()
