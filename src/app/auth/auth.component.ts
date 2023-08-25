@@ -36,7 +36,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.store.dispatch(logout())
+  }
   ngOnDestroy(): void {}
 
   login() {
@@ -50,6 +52,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     console.log({ user: this.user });
     this.store.select('user').subscribe((user: User) => {
       if (!!user) {
+        console.log({user})
         this.socket.emit('join', { idUser: user.id });
         this.toast.success('Heureux de vous revoir ' + user.username + ' !');
         if (user.roles.map((role) => role.name).includes('admin'))
@@ -57,6 +60,8 @@ export class AuthComponent implements OnInit, OnDestroy {
         else if (user.roles.map((role) => role.name).includes('user'))
           this.router.navigateByUrl('/feature/cities');
         else this.router.navigateByUrl('/feature/cities');
+      }else{
+        this.loginForm.reset()
       }
     });
   }
