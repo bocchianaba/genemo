@@ -1,7 +1,14 @@
+
 <app-banner [title]="'Tous les Modules'"></app-banner>
 <section class="container">
-  <div class="row d-flex justify-content-center align-items-center">
-    <div class="col-sm-8 col-md-6 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
+  <div class="row d-flex justify-content-center align-items-center my-4">
+    <div class="field col-4 sm:col-6">
+        <span class="p-float-label">
+            <p-dropdown (onChange)="go_to_city($event)" inputId="dropdown" [options]="cities" [(ngModel)]="region_name" optionLabel="name" optionValue="name"></p-dropdown>
+            <label for="dropdown">Sélectionner une ville</label>
+        </span>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4 px-4">
       <div class="input-group my-2 w-100">
         <input type="search" (keyup)="search_module()" [(ngModel)]="search_name" class="form-control" id="search_bar"
           placeholder="Rechercher par ici ...">
@@ -30,7 +37,7 @@
         <i class="fa fa-ellipsis-v mx-2"></i>
         <div class="d-none d-md-block">Plus</div>
       </button> -->
-    </div>
+    </div>  
   </div>
 </section>
 <ng-container *ngIf="modules$| async as module_list">
@@ -38,7 +45,7 @@
     <section class="container" *ngIf="display=='list'">
       <div class="row">
         <nav class="nav justify-content-center align-items-center  flex-column">
-          <a *ngFor="let module of module_list.modules" class="nav-link active" [routerLink]="'/modules/'+module.id">{{module.stationName}}</a>
+          <a *ngFor="let module of module_list.modules" class="nav-link active" [routerLink]="'/feature/city/'+region_name+'/modules/'+module.id">{{module.stationName}}</a>
         </nav>
       </div>
       <ngb-pagination class="d-flex justify-content-center my-4" (pageChange)="page_change($event)"
@@ -142,7 +149,7 @@
                 </div>
               </div>
               <div class="text-center">
-                <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
+                <button class="btn btn-primary" [routerLink]="'/feature/city/'+region_name+'/modules/'+module.id">
                   <i class="fa fa-plus mx-2"></i>
                   Voir plus
                 </button>
@@ -220,7 +227,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr [routerLink]="'/modules/'+module.id" style="cursor: pointer" *ngFor="let module of module_list.modules" class="align-middle" [ngClass]="{'alert alert-danger':module?.status?.includes('FAULT')}">
+              <tr [routerLink]="'/feature/city/'+region_name+'/modules/'+module.id" style="cursor: pointer" *ngFor="let module of module_list.modules" class="align-middle" [ngClass]="{'alert alert-danger':module?.status?.includes('FAULT')}">
                 <td scope="row">{{module.stationName}}</td>
                 <td>
                   <span placement="left" [ngbTooltip]="module.status.includes('FAULT')?'En défaut':'Sans défaut'" *ngIf="module?.status=='NOT_RUNNING/FAULT' ||module?.status=='NOT_RUNNING'" class="text-danger">
@@ -266,7 +273,7 @@
                 <td>{{module.infoVidange?.date | camerounDate:"dddd DD MMMM yyyy à HH:mm"}}</td>
                 <td>{{module.infoVidange?.remarque}}</td>
                 <td>
-                  <button class="btn btn-primary" [routerLink]="'/modules/'+module.id">
+                  <button class="btn btn-primary" [routerLink]="'/feature/city/'+region_name+'/modules/'+module.id">
                     <i class="fa fa-plus mx-2" aria-hidden="true"></i> voir plus
                   </button>
                 </td>

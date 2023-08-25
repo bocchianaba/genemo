@@ -1,0 +1,28 @@
+<div class="container-fluid">
+    <div class="d-flex row login_content justify-content-center align-items-center">
+      <div class="col-md-6 col-sm-10">
+        <div class="text-center h3">Megatec</div>
+        <div class="text-center h6">
+          Bienvenue sur votre application de monitoring.
+        </div>
+        <div class="text-center h6">
+          Connectez-vous pour commencer !
+        </div>
+        <div class="text-center my-4">
+          <div class="p-field mb-2" style="display: flex;flex-direction: column;">
+            <label for="username2">Nom d'utilisateur</label>
+            <input id="username2" type="username" aria-describedby="username2-help" [(ngModel)]="username" [ngClass]="{'p-invalid': !username}" pInputText />
+            <small id="username2-help" *ngIf="!username" class="p-invalid">Ce champ est requis !</small>
+          </div>
+          <div class="p-field mb-2" style="display: flex;flex-direction: column;">
+            <label for="password">Mot de passe</label>
+            <p-password id="password" [toggleMask]="true" aria-describedby="password-help" [(ngModel)]="password" [ngClass]="{'p-invalid': !password}"></p-password>
+            <small id="password-help" *ngIf="!password" class="p-invalid">Ce champ est requis !</small>
+          </div>
+        </div>
+        <div class="text-center mt-4">
+          <button type="button" class="btn btn-success"(click)="login()">Se connecter</button>
+        </div>
+      </div>
+    </div>
+</div>

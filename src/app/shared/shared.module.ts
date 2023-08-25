@@ -10,6 +10,7 @@ import { SleepComponent } from './components/svg/sleep/sleep.component';
 import { TableComponent } from './components/svg/table/table.component';
 import { RunningComponent } from './components/svg/running/running.component';
 import { CamerounDatePipe } from './pipes/cameroun-date.pipe';
+import { httpInterceptorProviders } from './interceptors';
 
 
 
@@ -39,6 +40,9 @@ import { CamerounDatePipe } from './pipes/cameroun-date.pipe';
     SleepComponent,
     RunningComponent,
     CamerounDatePipe
+  ],
+  providers: [
+    httpInterceptorProviders
   ]
 })
 export class SharedModule { }

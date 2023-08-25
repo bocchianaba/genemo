@@ -38,8 +38,8 @@ export class ModuleService {
   get_module(id: string | null): Observable<Modules_Paginate> {
     return this.http.get<Modules_Paginate>(`${environment.backend_url}/modules/${id}/data`)
   }
-  get_all_modules(page=1,limit=10, search_name=''): Observable<Modules_Paginate> {
-    return this.http.get<Modules_Paginate>(`${environment.backend_url}/modules?page=${page}&limit=${limit}&name=${search_name}`)
+  get_all_modules(region_name: string, page=1,limit=10, search_name=''): Observable<Modules_Paginate> {
+    return this.http.get<Modules_Paginate>(`${environment.backend_url}/regions/${region_name}/modules?page=${page}&limit=${limit}&name=${search_name}`)
   }
 
   constructor(private http: HttpClient) { }

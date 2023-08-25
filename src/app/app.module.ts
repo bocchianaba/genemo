@@ -12,6 +12,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
+import { StateModule } from './store/store.module';
+import { EffectsModule } from '@ngrx/effects';
+import { UserEffect } from './store/user/user.effect';
 
 
 registerLocaleData(localeFr);
@@ -57,10 +63,12 @@ const ngx_ui_loader_configuration:NgxUiLoaderConfig =
     AppRoutingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    SharedModule,
     NgxUiLoaderModule.forRoot(ngx_ui_loader_configuration),
     NgxUiLoaderRouterModule,
-    NgbModule
+    NgbModule,
+    StateModule,
+    SharedModule,
+    EffectsModule.forRoot([UserEffect])
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'fr-CM' }

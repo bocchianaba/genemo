@@ -1,0 +1,42 @@
+
+<app-banner [title]="'Choisissez une région'"></app-banner>
+<section class="container">
+  <div class="row d-flex justify-content-center align-items-center">
+    <div class="col-sm-8 col-md-6 col-lg-4 col-xl-4 offset-sm-2 offset-md-2 offset-lg-4 offset-xl-4 px-4">
+      <div class="input-group my-2 w-100">
+        <input type="search" (keyup)="search_city()" [(ngModel)]="search_name" class="form-control" id="search_bar"
+          placeholder="Rechercher par ici ...">
+        <button class="btn btn-primary" type="button" id="button-addon2">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<ng-container *ngIf="cities$| async as city_list">
+  <ng-container *ngIf="city_list.length;else empty_cities_list">
+    <section class="container">
+      <div class="row">
+        <nav class="nav justify-content-center align-items-center  flex-column">
+          <a *ngFor="let city of city_list" class="nav-link active" [routerLink]="'/feature/city/'+city.name+'/modules'">{{city.name}}</a>
+        </nav>
+      </div>
+    </section>
+  </ng-container>
+  <ng-template #empty_cities_list>
+    <section class="container">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-sm-10 col-md-6 col-lg-4">
+          <div class="row justify-content-center">
+            <img src="assets/humaans.png" alt="empty_img">
+          </div>
+        </div>
+        <h1 class="text-center mt-4 pt-4 text-danger">
+          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          Aucune région trouvé
+        </h1>
+        <p class="text-center">Contacter l'administrateur pour vous donner les droits sur les villes !</p>
+      </div>
+    </section>
+  </ng-template>
+</ng-container>
