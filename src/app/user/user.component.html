@@ -1,228 +1,344 @@
-<div class="container container-fluid mt-4 pt-4">
+<app-banner [title]="'Gestion des utilisateurs'"></app-banner>
+<div class="container container-fluid">
   <div class="jumbotron text-center app-container">
-    <h1>Gestion des utilisateurs</h1>
-    <div class="my-5">
-      <div class="row d-flex align-items-center my-5">
-        <div class="col-md-4 col-lg-6 d-flex">
-          <input
-            class="form-control float-right"
-            type="search"
-            placeholder="search by name ..."
-            name="search_bar"
-            id="search_bar"
-          />
-        </div>
-        <div class="col-md-8 col-lg-6 d-flex justify-content-around">
-          <div class="row align-items-center justify-content-between">
-            <button
-              (click)="open('create', null)"
-              class="col btn btn-success mx-1"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Add user"
-            >
-              <i class="fa fa-user-plus mx-2"></i>
-            </button>
-            <button
-              class="col btn btn-primary mx-1"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Filter user"
-            >
-              <i class="fa fa-filter mx-2"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="display == 'list'" class="row d-flex align-items-center my-5">
-        <table
-          class="table table-hover table-bordered table-inverse table-responsive"
-        >
-          <thead class="thead-default">
-            <tr>
-              <th>#</th>
-              <th>Nom utilisateur</th>
-              <th>Roles</th>
-              <th>Villes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody *ngIf="users_paginate$ |async as users_paginate">
-            <tr
-              class="align-middle"
-              *ngFor="let usr of users_paginate?.users; let i = index"
-              (mouseenter)="user=usr"
-            >
-              <td scope="row">
-                {{ i + 1 }}
-              </td>
-              <td>{{ usr.username }}</td>
-              <td>
-                <span *ngFor="let role of usr.roles; let j = index"
-                  >{{ role.name
-                  }}<ng-container *ngIf="j < usr.roles.length - 1"
-                    >,
-                  </ng-container></span
-                >
-              </td>
-              <td>
-                <span *ngFor="let town of usr.idTownAuthorise; let j = index"
-                  >{{ town?.name ?? town
-                  }}<ng-container *ngIf="j < usr.idTownAuthorise.length - 1"
-                    >,
-                  </ng-container></span
-                >
-              </td>
-              <td>
-                <button
-                  class="btn btn-primary mx-2"
-                  (click)="open('view',usr)"
-                >
-                  <i class="fa fa-plus"></i> Détails
-                </button>
-                <button
-                  class="btn btn-warning mx-2"
-                  (click)="open('update',usr)"
-                >
-                  <i class="fa fa-pencil"></i> Modifier
-                </button>
-                <button
-                  class="btn btn-danger mx-2"
-                  (click)="open('delete',usr)"
-                >
-                  <i class="fa fa-trash"></i> Supprimer
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p-dialog header="Ajouter des rôles" [(visible)]="assign_dialog">                   
-        <div class="row my-2 d-flex justify-content-center">
-          <div class="col-sm-8">
-            <p-table  
-              [(selection)]="roles_to_assign" 
-              dataKey="name" 
-              [value]="selected_user?.unassign_roles" >
+    <div *ngIf="display == 'list'" class="row d-flex align-items-center">
+      <div class="col-sm-12 col-md-12 col-lg-6" *ngIf="users_paginate$ |async as users_paginate">          
+        <div class="card">
+          <p-toolbar styleClass="mb-4 gap-2">
+              <ng-template pTemplate="left">
+                  <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mx-2" (click)="open('create', null)"></button>
+                  <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="open('delete',users_selected, true)" [disabled]="!users_selected || !users_selected.length"></button>
+              </ng-template>
+      
+              <!-- <ng-template pTemplate="right">
+                  <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
+                  <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+              </ng-template> -->
+          </p-toolbar>        
+          <p-table #dt 
+            [value]="users_paginate.users" 
+            [rows]="users_paginate.pagination.limit" 
+            [paginator]="true" 
+            [globalFilterFields]="['username','email']"
+            [(selection)]="users_selected" 
+            [rowHover]="true" 
+            dataKey="id"
+            currentPageReportTemplate="Présentant du {first} au {last} de {totalRecords} utilisateurs" 
+            [showCurrentPageReport]="true">
+              <ng-template pTemplate="caption">
+                  <div class="d-flex align-items-center justify-content-between">
+                      <h5 class="m-0">Tous vos utilisateurs</h5>
+                      <span class="p-input-icon-left">
+                          <i class="pi pi-search"></i>
+                          <input pInputText type="text" [(ngModel)]="search_name" (input)="dt.filterGlobal(search_name, 'contains')" placeholder="Search..." />
+                      </span>
+                  </div>
+              </ng-template>
               <ng-template pTemplate="header">
                   <tr>
-                      <th style="width:4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-                      <th>Liste des rôles non assignés</th>
+                      <th style="width: 4rem">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th pSortableColumn="username">Nom <p-sortIcon field="username"></p-sortIcon></th>
+                      <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+                      <th>Ville</th>
+                      <th>Rôles</th>
+                      <th>Actions</th>
                   </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-role>
+              <ng-template pTemplate="body" let-usr>
                   <tr>
-                      <td><p-tableCheckbox [value]="role"></p-tableCheckbox></td>
-                      <td>{{role.name}}</td>
+                      <td>
+                          <p-tableCheckbox [value]="usr"></p-tableCheckbox>
+                      </td>
+                      <td>{{usr.username}}</td>
+                      <td>{{usr.email}}</td>
+                      <td>
+                        <span *ngFor="let role of usr.roles; let j = index"
+                          >{{ role.name
+                          }}<ng-container *ngIf="j < usr.roles.length - 1"
+                            >,
+                          </ng-container></span
+                        >
+                      </td>
+                      <td>
+                        <span *ngFor="let town of usr.idTownAuthorise; let j = index"
+                          >{{ town?.name ?? town
+                          }}<ng-container *ngIf="j < usr.idTownAuthorise.length - 1"
+                            >,
+                          </ng-container></span
+                        >
+                      </td>
+                      <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                          <button 
+                            pButton 
+                            pRipple 
+                            icon="pi pi-eye" 
+                            class="p-button-rounded p-button-primary mx-1" 
+                            (click)="open('view',usr)">
+                          </button>
+                          <button 
+                            pButton 
+                            pRipple 
+                            icon="pi pi-pencil" 
+                            class="p-button-rounded p-button-success mx-1" 
+                            (click)="open('update',usr)">
+                          </button>
+                          <button 
+                            pButton 
+                            pRipple 
+                            icon="pi pi-trash" 
+                            class="p-button-rounded p-button-warning mx-1" 
+                            (click)="open('delete',usr, false)">
+                          </button>
+                        </div>
+                      </td>
                   </tr>
               </ng-template>
-            </p-table>
-          </div>
-          <div class="text-center my-2">
-            <p-button [disabled]="roles_to_assign.length==0" icon="pi pi-check" label="Assigner" (onClick)="assign_roles()" styleClass="p-button-success"></p-button>
-          </div>
+              <ng-template pTemplate="summary">
+                  <div class="flex align-items-center justify-content-between">
+                      Au total nous avons {{users_paginate.users ? users_paginate.users.length : 0 }} utilisateur(s).
+                  </div>
+              </ng-template>
+          </p-table>
         </div>
-      </p-dialog>
-
-      <p-dialog [(visible)]="display_action" (onHide)="reset_dialog()" [modal]="true" [maximizable]="true">
-        <ng-template pTemplate="header"> 
-          <h4 *ngIf="action=='create'">Ajouter un utilisateur</h4>
-          <h4 *ngIf="action=='delete'">Supprimer <strong>{{selected_user?.username}}</strong></h4>
-          <h4 *ngIf="action=='update'">Modifier <strong>{{selected_user?.username}}</strong></h4>
-          <h4 *ngIf="action=='view'">Détails de <strong>{{selected_user?.username}}</strong></h4>
-        </ng-template>
-        <p *ngIf="action == 'delete'">Etes vous sûr de vouloir supprimer l'utilisateur <strong>{{selected_user?.username}}</strong> !</p>
-        <div *ngIf="action!='delete'">
-          <p-tabView>
-            <p-tabPanel header="Identifiants" leftIcon="pi pi-user-edit"> 
-              <div class="my-4 p-text-center">
-                <div class="field my-5">
-                    <span class="p-float-label">
-                        <input [disabled]="action=='view'" type="text" id="email" (change)="update_email($event)" pInputText [(ngModel)]="email" [value]="selected_user?.email"> 
-                        <label for="email">Email</label>
-                    </span>
-                </div>
-                <div class="field my-5">
-                    <span class="p-float-label">
-                        <input [disabled]="action=='view'" type="text" id="username" (change)="update_username($event)" pInputText [(ngModel)]="username" [value]="selected_user?.username"> 
-                        <label for="username">Nom d'utilisateur</label>
-                    </span>
-                </div>
-                <div class="field my-5" *ngIf="action=='create'">
-                    <span class="p-float-label">
-                        <p-password type="text" id="password" (change)="update_password($event)" [(ngModel)]="password"></p-password>
-                        <label for="password">Mot de passe</label>
-                    </span>
-                </div>
-                <button pButton pRipple *ngIf="action!='view'" icon="pi pi-check" class="p-button-success mx-2" type="button" (click)="operate_action()">Sauvegarder</button> 
-                <button pButton pRipple *ngIf="action!='view'" icon="pi pi-times" class="p-button-danger mx-2" type="button" (click)="reset_dialog()">Annuler</button> 
-              </div>
-            </p-tabPanel>
-            <p-tabPanel *ngIf="action!='create'" header="Roles" leftIcon="pi pi-eye">
-              <div class="row my-2 d-flex justify-content-between align-items-center">
-                <div class="col-sm-6">
-                  <button 
-                    pButton 
-                    type="button" 
-                    icon="pi pi-plus-circle" 
-                    (click)="assign($event)" 
-                    label="Assigner" 
-                    class="p-button-success p-button-rounded">
-                  </button>
-                </div>
-                <div class="col-sm-6">
-                  <p-button 
-                    [disabled]="!roles_to_unassign.length" 
-                    icon="pi pi-times" 
-                    (click)="unassign($event)" 
-                    [badge]="roles_to_unassign.length.toString()"
-                    label="Désassigner" 
-                    styleClass="p-button-danger p-button-rounded" 
-                    badgeClass="p-badge-light">
-                  </p-button>
-                </div>
-              </div>              
-              <div class="row my-2 d-flex justify-content-center">
-                <div class="col-sm-8">
-                  <p-table  
-                    [(selection)]="roles_to_unassign" 
-                    dataKey="name" 
-                    [value]="selected_user?.roles" >
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th style="width:4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-                            <th>Liste de ses rôles</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-role>
-                        <tr>
-                            <td><p-tableCheckbox [value]="role"></p-tableCheckbox></td>
-                            <td>{{role.name}}</td>
-                        </tr>
-                    </ng-template>
-                  </p-table>
-                </div>
-              </div>
-            </p-tabPanel>
-            <p-tabPanel *ngIf="action!='create'" header="Villes" leftIcon="pi pi-building">
-              <div class="row my-2">
-                <div class="col-6" *ngIf="towns$ | async as towns">
-                  <p-multiSelect [disabled]="action=='view'" [(ngModel)]="cities_modified" [options]="towns.data" optionLabel="name" optionValue="id" defaultLabel="Selectionner une ville" display="chip"></p-multiSelect> 
-                </div>
-              </div>  
-            </p-tabPanel>
-        </p-tabView>                               
-        </div>    
-      </p-dialog>
-
-      <ngb-pagination
-        size="lg"
-        class="d-flex justify-content-center"
-        [collectionSize]="70"
-        [(page)]="page"
-        aria-label="Default pagination"
-      ></ngb-pagination>
+      </div>
     </div>
+
+    <p-dialog [header]="'Ajouter des rôles à '+selected_user?.username" [(visible)]="assign_dialog">                   
+      <div class="row my-2 d-flex justify-content-center">
+        <div class="col-sm-11">
+          <p-table  
+            [paginator]="true" 
+            [rows]="5" 
+            [(selection)]="roles_to_assign" 
+            dataKey="name" 
+            [rowHover]="action!='view'"
+            [value]="selected_user?.unassign_roles" >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngIf="action!='view'" style="width:4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                    <th>Liste des rôles non assignés</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-role>
+                <tr>
+                    <td *ngIf="action!='view'"><p-tableCheckbox [value]="role"></p-tableCheckbox></td>
+                    <td>{{role.name}}</td>
+                </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="text-center my-2">
+          <p-button [disabled]="roles_to_assign.length==0" [badge]="roles_to_assign.length.toString()" badgeClass="p-badge-light" icon="pi pi-check" label="Assigner" (onClick)="assign_roles()" styleClass="p-button-success"></p-button>
+        </div>
+      </div>
+    </p-dialog>
+    
+    <p-dialog [header]="'Ajouter des villes à '+selected_user?.username" [(visible)]="assign_city_dialog">                   
+      <div class="row my-2 d-flex justify-content-center">
+        <div class="col-sm-11">
+          <p-table  
+            [(selection)]="cities_to_assign" 
+            [paginator]="true" 
+            [rows]="5" 
+            dataKey="name" 
+            [rowHover]="action!='view'"
+            [value]="selected_user?.unassign_cities" >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngIf="action!='view'" style="width:4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                    <th>Liste des villes non assignés</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-city>
+                <tr>
+                    <td *ngIf="action!='view'"><p-tableCheckbox [value]="city"></p-tableCheckbox></td>
+                    <td>{{city.name}}</td>
+                </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="text-center my-2">
+          <p-button [disabled]="cities_to_assign.length==0" [badge]="cities_to_assign.length.toString()" badgeClass="p-badge-light" icon="pi pi-check" label="Assigner" (onClick)="assign_cities()" styleClass="p-button-success"></p-button>
+        </div>
+      </div>
+    </p-dialog>
+
+    <p-dialog [(visible)]="display_action" (onHide)="reset_dialog()" [modal]="true" [maximizable]="true">
+      <ng-template pTemplate="header"> 
+        <h4 *ngIf="action=='create'">Ajouter un utilisateur</h4>
+        <h4 *ngIf="action=='delete' && !multiple">Supprimer <strong>{{selected_user?.username}}</strong></h4>
+        <h4 *ngIf="action=='delete' && multiple">Supprimer <strong>{{users_selected.length}} utilisateurs</strong></h4>
+        <h4 *ngIf="action=='update'">Modifier <strong>{{selected_user?.username}}</strong></h4>
+        <h4 *ngIf="action=='view'">Détails de <strong>{{selected_user?.username}}</strong></h4>
+      </ng-template>
+      <p *ngIf="action == 'delete' && !multiple">Etes vous sûr de vouloir supprimer l'utilisateur <strong>{{selected_user?.username}}</strong> !</p>
+      <p *ngIf="action == 'delete' && multiple">Etes vous sûr de vouloir supprimer ces <strong>{{users_selected.length}} utilisateurs</strong> !</p>
+      <div *ngIf="action!='delete'">
+        <p-tabView>
+          <p-tabPanel header="Identifiants" leftIcon="pi pi-user-edit">
+            <div class="my-2 p-text-center row d-flex justify-content-center "> 
+                <div class="col-md">
+                    <p-card>
+                        <ng-template pTemplate="header">
+                          <div class="text-center pt-2 px-4">
+                            <h2 class="m-0">Informations personnelles</h2>
+                          </div>
+                        </ng-template>
+                        <form>  
+                            <div class="p-fluid">
+                                <div class="p-field my-2">
+                                    <span class="p-float-label">
+                                        <input  [disabled]="action=='view'" type="text" id="email" (input)="update_email($event)" pInputText [value]="selected_user?.email"> 
+                                        <label for="email">Email</label>
+                                    </span>
+                                </div>
+                                <div class="p-field my-5">
+                                    <span class="p-float-label">
+                                        <input [disabled]="action=='view'" type="text" id="username" (input)="update_username($event)" pInputText [value]="selected_user?.username"> 
+                                        <label for="username">Nom d'utilisateur</label>
+                                    </span>
+                                </div> 
+                                <div class="field my-5" *ngIf="action=='create'">
+                                    <span class="p-float-label">
+                                        <p-password id="password" (change)="update_password($event)" [(ngModel)]="password"></p-password>
+                                        <label for="password">Mot de passe</label>
+                                    </span>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-6">
+                                    <p-button 
+                                      *ngIf="action!='view' && id_changed" 
+                                      icon="pi pi-check" 
+                                      styleClass="p-button-success p-button-rounded mx-2"
+                                      label="Sauvegarder" 
+                                      (click)="operate_action()"></p-button> 
+                                  </div>
+                                  <div class="col-sm-6">
+                                    <p-button 
+                                      *ngIf="action!='view' && id_changed" 
+                                      icon="pi pi-times" 
+                                      styleClass="p-button-danger p-button-rounded mx-2" 
+                                      label="Annuler"
+                                      (click)="reset_dialog()"></p-button> 
+                                  </div>
+                                </div>                                
+                            </div>
+                        </form> 
+                    </p-card>  
+                </div>
+            </div> 
+          </p-tabPanel>
+          <p-tabPanel *ngIf="action!='create'" header="Roles" leftIcon="pi pi-eye">           
+            <div class="row my-2 d-flex justify-content-center">
+              <div class="col-sm-11">
+                <p-table  
+                  [paginator]="true" 
+                  [rows]="5" 
+                  [(selection)]="roles_to_unassign" 
+                  dataKey="name" 
+                  [rowHover]="action!='view'"
+                  [value]="selected_user?.roles" >
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th *ngIf="action!='view'" style="width:4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                          <th>Liste de ses rôles</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-role>
+                      <tr>
+                          <td *ngIf="action!='view'"><p-tableCheckbox [value]="role"></p-tableCheckbox></td>
+                          <td>{{role.name}}</td>
+                      </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <div class="row my-2 d-flex justify-content-between align-items-center">
+              <div class="col-sm-6">
+                <button  
+                  *ngIf="action!='view'"
+                  pButton 
+                  type="button" 
+                  icon="pi pi-plus-circle" 
+                  (click)="assign($event)" 
+                  label="Assigner" 
+                  class="p-button-success p-button-rounded">
+                </button>
+              </div>
+              <div class="col-sm-6">
+                <p-button  
+                  *ngIf="action!='view'"
+                  [disabled]="!roles_to_unassign.length" 
+                  icon="pi pi-times" 
+                  (click)="unassign($event)" 
+                  [badge]="roles_to_unassign.length.toString()"
+                  label="Désassigner" 
+                  styleClass="p-button-danger p-button-rounded" 
+                  badgeClass="p-badge-light">
+                </p-button>
+              </div>
+            </div>   
+          </p-tabPanel>
+          <p-tabPanel *ngIf="action!='create'" header="Villes" leftIcon="pi pi-building">           
+            <div class="row my-2 d-flex justify-content-center">
+              <div class="col-sm-11">
+                <p-table  
+                  [paginator]="true" 
+                  [rows]="5" 
+                  [(selection)]="cities_to_unassign" 
+                  dataKey="name" 
+                  [rowHover]="action!='view'"
+                  [value]="selected_user?.idTownAuthorise" >
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th *ngIf="action!='view'" style="width:4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                          <th>Liste de ses villes</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-city>
+                      <tr>
+                          <td *ngIf="action!='view'"><p-tableCheckbox [value]="city"></p-tableCheckbox></td>
+                          <td>{{city.name}}</td>
+                      </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <div class="row my-2 d-flex justify-content-between align-items-center">
+              <div class="col-sm-6">
+                <button  
+                  *ngIf="action!='view'"
+                  pButton 
+                  type="button" 
+                  icon="pi pi-plus-circle" 
+                  (click)="assign_city($event)" 
+                  label="Assigner" 
+                  class="p-button-success p-button-rounded">
+                </button>
+              </div>
+              <div class="col-sm-6">
+                <p-button  
+                  *ngIf="action!='view'"
+                  [disabled]="!cities_to_unassign.length" 
+                  icon="pi pi-times" 
+                  (click)="unassign_cities($event)" 
+                  [badge]="cities_to_unassign.length.toString()"
+                  label="Désassigner" 
+                  styleClass="p-button-danger p-button-rounded" 
+                  badgeClass="p-badge-light">
+                </p-button>
+              </div>
+            </div>   
+          </p-tabPanel>
+      </p-tabView>                               
+      </div>  
+      <div *ngIf="action=='delete'">
+        <p-button icon="pi pi-trash" (click)="operate_action(multiple)" styleClass="p-button-rounded p-button-danger" label="Supprimer"></p-button>
+        <p-button icon="pi pi-times" (click)="display_action=false"  styleClass="p-button-rounded p-button-success" label="Annuler"></p-button>
+      </div>  
+    </p-dialog>
   </div>
 </div>

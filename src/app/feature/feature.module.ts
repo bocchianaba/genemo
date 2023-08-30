@@ -37,6 +37,7 @@ import {DropdownModule} from 'primeng/dropdown'
 import {TabViewModule} from 'primeng/tabview';
 import {TableModule} from 'primeng/table';
 import { CardModule } from 'primeng/card';
+import { ToolbarModule } from 'primeng/toolbar'
 
 const socket_config: SocketIoConfig= {url: environment.backend_socket_url}
 
@@ -72,7 +73,8 @@ const socket_config: SocketIoConfig= {url: environment.backend_socket_url}
     TabViewModule,
     TableModule,
     ReactiveFormsModule,
-    CardModule
+    CardModule,
+    ToolbarModule
   ],
   providers: [
     ModuleService,

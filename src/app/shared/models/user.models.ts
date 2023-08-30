@@ -20,12 +20,14 @@ export interface UserPaginate {
   }
   
   export interface Role {
+    id?: string;
     _id: string;
     name: string;
   }
   
   export interface Town {
-    _id: string;
+    id?: any;
+    _id?: string;
     name?: string;
   }
   export interface Roles {
