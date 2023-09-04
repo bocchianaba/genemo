@@ -1,8 +1,8 @@
 <app-banner [title]="'Gestion des utilisateurs'"></app-banner>
-<div class="container container-fluid">
+<div class="container-fluid">
   <div class="jumbotron text-center app-container">
-    <div *ngIf="display == 'list'" class="row d-flex align-items-center">
-      <div class="col-sm-12 col-md-12 col-lg-6" *ngIf="users_paginate$ |async as users_paginate">          
+    <div *ngIf="display == 'list'" class="row d-flex align-items-center justify-content-center">
+      <div class="col-sm-12 col-md-12 col-lg-10" *ngIf="users_paginate$ |async as users_paginate">          
         <div class="card">
           <p-toolbar styleClass="mb-4 gap-2">
               <ng-template pTemplate="left">
@@ -41,8 +41,8 @@
                       </th>
                       <th pSortableColumn="username">Nom <p-sortIcon field="username"></p-sortIcon></th>
                       <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-                      <th>Ville</th>
                       <th>Rôles</th>
+                      <th>Villes</th>
                       <th>Actions</th>
                   </tr>
               </ng-template>
@@ -239,6 +239,7 @@
                   [rows]="5" 
                   [(selection)]="roles_to_unassign" 
                   dataKey="name" 
+                  *ngIf="selected_user?.roles?.length; else no_role"
                   [rowHover]="action!='view'"
                   [value]="selected_user?.roles" >
                   <ng-template pTemplate="header">
@@ -254,6 +255,11 @@
                       </tr>
                   </ng-template>
                 </p-table>
+                <ng-template #no_role>
+                  <div class="row justify-content-center align-items-center">
+                    <h6 class="text-danger">Aucun role affecté pour le moment. Ajoutez-en !</h6>
+                  </div>
+                </ng-template>
               </div>
             </div>
             <div class="row my-2 d-flex justify-content-between align-items-center">
@@ -291,6 +297,7 @@
                   [(selection)]="cities_to_unassign" 
                   dataKey="name" 
                   [rowHover]="action!='view'"
+                  *ngIf="selected_user?.idTownAuthorise.length; else no_city"
                   [value]="selected_user?.idTownAuthorise" >
                   <ng-template pTemplate="header">
                       <tr>
@@ -304,7 +311,12 @@
                           <td>{{city.name}}</td>
                       </tr>
                   </ng-template>
-                </p-table>
+                </p-table>                
+                <ng-template #no_city>
+                  <div class="row justify-content-center align-items-center">
+                    <h6 class="text-danger">Aucune ville affecté pour le moment. Ajoutez-en !</h6>
+                  </div>
+                </ng-template>
               </div>
             </div>
             <div class="row my-2 d-flex justify-content-between align-items-center">

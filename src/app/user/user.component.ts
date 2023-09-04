@@ -184,7 +184,7 @@ export class UserComponent implements OnInit, OnDestroy {
   
   update_password(event: any){
     this.id_changed=true
-    this.username=event.target.value
+    this.password=event.target.value
   }
 
   reset_dialog(){
@@ -195,6 +195,10 @@ export class UserComponent implements OnInit, OnDestroy {
     this.email=''
     this.password=''
     this.selected_user={}
+    this.roles_to_assign=[]
+    this.roles_to_unassign=[]
+    this.cities_to_assign=[]
+    this.cities_to_unassign=[]
     this.id_changed=false
     this.multiple=false
   }

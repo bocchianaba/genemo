@@ -40,10 +40,6 @@ export class FeatureComponent implements OnInit, OnDestroy {
           label: 'Gestion des modules',
           icon: 'pi pi-cog',
           routerLink: ['/feature/cities']
-        },{
-          label: 'Gestion des roles',
-          icon: 'pi pi-eye',
-          routerLink: ['/feature/roles']
         }]
         else if(user.roles.map(role=>role.name).includes('user'))        
           this.items=[{
